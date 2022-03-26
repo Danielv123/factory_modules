@@ -1,0 +1,11 @@
+{
+	"name": "factory_modules",
+	"version": "0.0.1",
+	"factorio_version": "1.1",
+	"title": "Factory Modules",
+	"author": "Danielv123",
+	"contact": "",
+	"homepage": "https://github.com/danielv123/factory_modules",
+	"description": "Massive modular factories without cheats or UPS issues",
+	"dependencies": ["base >= 1.0.0"]
+}
