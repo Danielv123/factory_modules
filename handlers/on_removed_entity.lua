@@ -1,4 +1,9 @@
-return function(event)
+local constants = require("constants")
+local table_contains = require("util.table_contains")
+local check_if_entity_is_inside_module = require("util.module.check_if_entity_is_inside_module")
+local handle_deconstruction_in_module = require("util.module.handle_deconstruction_in_module")
+
+local check_if_module_should_be_removed = function (event)
     -- Check if the entity is part of a module
     for k,v in pairs(global.factory_modules.modules) do
         for index,entity in pairs(v.entities) do
@@ -19,6 +24,20 @@ return function(event)
                 end
                 break
             end
+        end
+    end
+end
+
+return function(event)
+    if event.entity and event.entity.valid then
+        if table_contains(constants.WALL_PIECES, event.entity.name) then
+            check_if_module_should_be_removed(event)
+        end
+
+        -- Mirror deconstruction inside modules
+        local is_inside_module = check_if_entity_is_inside_module(event.entity)
+        if is_inside_module then
+            handle_deconstruction_in_module(is_inside_module.module, is_inside_module.entity)
         end
     end
 end

@@ -1,6 +1,9 @@
-local MIN_MODULE_SIZE = require("constants").MIN_MODULE_SIZE
+local constants = require("constants")
 local filter_table = require("util.filter_table")
+local table_contains = require("util.table_contains")
 local get_primary_module = require("util.module.get_primary")
+local handle_construction_in_module = require("util.module.handle_construction_in_module")
+local check_if_entity_is_inside_module = require("util.module.check_if_entity_is_inside_module")
 
 local find_adjacent = function(entity)
     local entities = entity.surface.find_entities_filtered{
@@ -273,8 +276,8 @@ local check_if_new_module = function(entity)
     if  max_x_count == min_x_count 
     and max_y_count == min_y_count 
     -- and #filtered_entities == (max_x_count + max_y_count + min_x_count + min_y_count - 4) 
-    and max_x_count > MIN_MODULE_SIZE
-    and max_y_count > MIN_MODULE_SIZE
+    and max_x_count > constants.MIN_MODULE_SIZE
+    and max_y_count > constants.MIN_MODULE_SIZE
     and entity_is_part_of_wall
     then
         -- game.print("Module created")
@@ -355,17 +358,19 @@ local check_if_new_module = function(entity)
         table.insert(global.factory_modules.modules, {
             primary = primary,
             combinator = combinator,
+            module_id = combinator.get_or_create_control_behavior().parameters[1].count,
             entities = filtered_entities,
             ports = ports,
             position = {
                 x = (max_x + min_x) / 2,
                 y = (max_y + min_y) / 2
             },
+            surface = surface,
             bounding_box = {
-                min_x,
-                min_y,
-                max_x,
-                max_y
+                min_x = min_x,
+                min_y = min_y,
+                max_x = max_x,
+                max_y = max_y
             },
             visualization = visualization
         })
@@ -375,5 +380,10 @@ local check_if_new_module = function(entity)
 end
 
 return function(event)
-    check_if_new_module(event.created_entity)
+    local is_inside_module = check_if_entity_is_inside_module(event.created_entity)
+    if is_inside_module ~= false then
+        handle_construction_in_module(is_inside_module.module, is_inside_module.entity)
+    elseif table_contains(constants.WALL_PIECES, event.created_entity.name) then
+        check_if_new_module(event.created_entity)
+    end
 end

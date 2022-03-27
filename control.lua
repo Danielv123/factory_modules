@@ -2,14 +2,6 @@ local on_built_entity_handler = require("handlers.on_built_entity")
 local on_removed_entity_handler = require("handlers.on_removed_entity")
 local on_tick_handler = require("handlers.on_tick")
 
-local wall_segment_filter = {
-    {filter = "name", name = "stone-wall"},
-    {filter = "name", name = "steel-chest"},
-    {filter = "name", name = "wooden-chest"},
-    {filter = "name", name = "constant-combinator"},
-    {filter = "name", name = "gate"},
-}
-
 local function init()
     -- Handle global state
     if global.factory_modules == nil then
@@ -28,44 +20,40 @@ script.on_nth_tick(60, init)
 
 script.on_event(
     defines.events.on_built_entity,
-    on_built_entity_handler,
-    wall_segment_filter
+    on_built_entity_handler
 )
 script.on_event(
     defines.events.on_robot_built_entity,
-    on_built_entity_handler,
-    wall_segment_filter
+    on_built_entity_handler
 )
 script.on_event(
     defines.events.script_raised_built,
-    on_built_entity_handler,
-    wall_segment_filter
+    on_built_entity_handler
 )
 script.on_event(
     defines.events.script_raised_revive,
-    on_built_entity_handler,
-    wall_segment_filter
+    on_built_entity_handler
 )
 
 script.on_event(
     defines.events.on_pre_player_mined_item,
-    on_removed_entity_handler,
-    wall_segment_filter
+    on_removed_entity_handler
 )
 script.on_event(
     defines.events.on_robot_pre_mined,
-    on_removed_entity_handler,
-    wall_segment_filter
+    on_removed_entity_handler
 )
 script.on_event(
     defines.events.on_entity_died,
-    on_removed_entity_handler,
-    wall_segment_filter
+    on_removed_entity_handler
 )
 script.on_event(
     defines.events.script_raised_destroy,
-    on_removed_entity_handler,
-    wall_segment_filter
+    on_removed_entity_handler
+)
+script.on_event(
+    defines.events.on_pre_ghost_deconstructed,
+    on_removed_entity_handler
 )
 
 script.on_event(
