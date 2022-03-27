@@ -1,5 +1,6 @@
 local on_built_entity_handler = require("handlers.on_built_entity")
 local on_removed_entity_handler = require("handlers.on_removed_entity")
+local on_tick_handler = require("handlers.on_tick")
 
 local wall_segment_filter = {
     {filter = "name", name = "stone-wall"},
@@ -59,4 +60,9 @@ script.on_event(
     defines.events.script_raised_destroy,
     on_removed_entity_handler,
     wall_segment_filter
+)
+
+script.on_event(
+    defines.events.on_tick,
+    on_tick_handler
 )

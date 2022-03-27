@@ -71,11 +71,18 @@ local create_io = function(type, entity, direction)
         loader.loader_type = "output"
     end
     return {
-        entities = {loader, chest}
+        type = type,
+        entities = {loader, chest}, -- Entities to remove on module removal
+        internal_chest = chest,
+        external_chest = entity,
     }
 end
 -- game.print(game.player.selected.direction)
 -- create_io("output", game.player.selected, game.player.selected.direction)
+
+local create_combinator = function(entity)
+
+end
 
 -- Check if the walls are arranged in a rectangle
 local check_if_new_module = function(entity)
@@ -225,7 +232,25 @@ local check_if_new_module = function(entity)
             end
         end
 
+        -- Create corner combinators to hold module information
+        local combinators = {}
+        for _,v in pairs(filtered_entities) do
+            if v.position.x == min_x and v.position.y == min_y then
+                table.insert(combinators, create_combinator(v.entity, "module_min_x_min_y", "module_min_x_min_y"))
+            end
+            if v.position.x == min_x and v.position.y == max_y then
+                table.insert(combinators, create_combinator(v.entity, "module_min_x_max_y", "module_min_x_max_y"))
+            end
+            if v.position.x == max_x and v.position.y == min_y then
+                table.insert(combinators, create_combinator(v.entity, "module_max_x_min_y", "module_max_x_min_y"))
+            end
+            if v.position.x == max_x and v.position.y == max_y then
+                table.insert(combinators, create_combinator(v.entity, "module_max_x_max_y", "module_max_x_max_y"))
+            end
+        end
+
         table.insert(global.factory_modules.modules, {
+            primary = true,
             entities = filtered_entities,
             ports = ports,
             position = {
