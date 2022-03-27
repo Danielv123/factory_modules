@@ -1,3 +1,5 @@
+local MIN_MODULE_SIZE = require("constants").MIN_MODULE_SIZE
+
 local find_adjacent = function(entity)
     local entities = entity.surface.find_entities_filtered{
         area = {{entity.position.x - 1, entity.position.y - 1}, {entity.position.x + 1, entity.position.y + 1}},
@@ -7,7 +9,7 @@ local find_adjacent = function(entity)
 end
 
 -- Check if the walls are arranged in a rectangle
-local check_rectangle = function(entity)
+local check_if_new_module = function(entity)
     local entities = {{
         checked = false,
         entity = entity
@@ -88,13 +90,36 @@ local check_rectangle = function(entity)
             min_y_count = min_y_count + 1
         end
     end
+
+    -- Filter to have an array of only the entities making up the wall
+    local filtered_entities = {}
+    for _,v in pairs(entities) do
+        if v.position.x == min_x 
+        or v.position.x == max_x
+        or v.position.y == min_y 
+        or v.position.y == max_y
+        then
+            table.insert(filtered_entities, v)
+        end
+    end
+
+    -- If the entity triggering the event isn't part of the wall, ignore
+    local entity_is_part_of_wall = false
+    for _,v in pairs(filtered_entities) do
+        -- game.print(v.entity.unit_number .. " " .. entity.unit_number)
+        if v.entity.unit_number == entity.unit_number then
+            entity_is_part_of_wall = true
+            break
+        end
+    end
     
     -- Check if the properties of the wall is consistent with being a rectangle
     if  max_x_count == min_x_count 
     and max_y_count == min_y_count 
-    and #entities == (max_x_count + max_y_count + min_x_count + min_y_count - 4) 
-    and max_x_count > 4
-    and max_y_count > 4
+    -- and #filtered_entities == (max_x_count + max_y_count + min_x_count + min_y_count - 4) 
+    and max_x_count > MIN_MODULE_SIZE
+    and max_y_count > MIN_MODULE_SIZE
+    and entity_is_part_of_wall
     then
         game.print("Module created")
         local visualization = {
@@ -106,8 +131,9 @@ local check_rectangle = function(entity)
                 surface = entity.surface,
             })
         }
+
         table.insert(global.factory_modules.modules, {
-            entities = entities,
+            entities = filtered_entities,
             position = {
                 x = (max_x + min_x) / 2,
                 y = (max_y + min_y) / 2
@@ -127,5 +153,5 @@ local check_rectangle = function(entity)
 end
 
 return function(event)
-    check_rectangle(event.created_entity)
+    check_if_new_module(event.created_entity)
 end
