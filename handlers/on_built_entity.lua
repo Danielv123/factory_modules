@@ -1,9 +1,9 @@
-local constants = require("constants")
-local filter_table = require("util.filter_table")
-local table_contains = require("util.table_contains")
-local get_primary_module = require("util.module.get_primary")
-local handle_construction_in_module = require("util.module.handle_construction_in_module")
-local check_if_entity_is_inside_module = require("util.module.check_if_entity_is_inside_module")
+local constants = require "constants"
+local filter_table = require "util.filter_table"
+local table_contains = require "util.table_contains"
+local get_primary_module = require "util.module.get_primary"
+local handle_construction_in_module = require "util.module.handle_construction_in_module"
+local check_if_entity_is_inside_module = require "util.module.check_if_entity_is_inside_module"
 
 local find_adjacent = function(entity)
     local entities = entity.surface.find_entities_filtered{
@@ -357,6 +357,7 @@ local check_if_new_module = function(entity)
 
         table.insert(global.factory_modules.modules, {
             primary = primary,
+            active = true,
             combinator = combinator,
             module_id = combinator.get_or_create_control_behavior().parameters[1].count,
             entities = filtered_entities,

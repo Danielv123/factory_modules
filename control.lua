@@ -1,6 +1,6 @@
-local on_built_entity_handler = require("handlers.on_built_entity")
-local on_removed_entity_handler = require("handlers.on_removed_entity")
-local on_tick_handler = require("handlers.on_tick")
+local on_built_entity_handler = require "handlers.on_built_entity"
+local on_removed_entity_handler = require "handlers.on_removed_entity"
+local on_tick_handler = require "handlers.on_tick"
 
 local function init()
     -- Handle global state

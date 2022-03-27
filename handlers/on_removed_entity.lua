@@ -1,7 +1,7 @@
-local constants = require("constants")
-local table_contains = require("util.table_contains")
-local check_if_entity_is_inside_module = require("util.module.check_if_entity_is_inside_module")
-local handle_deconstruction_in_module = require("util.module.handle_deconstruction_in_module")
+local constants = require "constants"
+local table_contains = require "util.table_contains"
+local check_if_entity_is_inside_module = require "util.module.check_if_entity_is_inside_module"
+local handle_deconstruction_in_module = require "util.module.handle_deconstruction_in_module"
 
 local check_if_module_should_be_removed = function (event)
     -- Check if the entity is part of a module
