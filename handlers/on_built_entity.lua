@@ -1,5 +1,6 @@
 local MIN_MODULE_SIZE = require("constants").MIN_MODULE_SIZE
 local filter_table = require("util.filter_table")
+local get_primary_module = require("util.module.get_primary")
 
 local find_adjacent = function(entity)
     local entities = entity.surface.find_entities_filtered{
@@ -21,26 +22,32 @@ end
 local create_io = function(type, entity, direction)
     local loader_x_offset = 0
     local loader_y_offset = 0
+    local external_loader_x_offset = 0
+    local external_loader_y_offset = 0
     local chest_x_offset = 0
     local chest_y_offset = 0
     local loader_direction = (direction + 4) % 8
-    game.print(loader_direction)
     if direction == 0 then
         loader_y_offset = -3
+        external_loader_y_offset = 1
         chest_y_offset = -1
     end
     if direction == 2 then
         loader_x_offset = 2
+        external_loader_x_offset = -2
         chest_x_offset = 1
     end
     if direction == 4 then
         loader_y_offset = 2
+        external_loader_y_offset = -2
         chest_y_offset = 1
     end
     if direction == 6 then
         loader_x_offset = -3
+        external_loader_x_offset = 1
         chest_x_offset = -1
     end
+
     --[[ Create loader ]]
     local loader_position = {
         x = entity.position.x + loader_x_offset,
@@ -50,7 +57,7 @@ local create_io = function(type, entity, direction)
         name = "express-loader",
         position = loader_position,
         direction = loader_direction,
-        force = entity.force,
+        force = game.forces.neutral,
         create_build_effect_smoke = false,
         move_stuck_players = true,
     }
@@ -61,6 +68,21 @@ local create_io = function(type, entity, direction)
             loader_position
         )
     end
+
+    --[[ Create external loader ]]
+    local external_loader_position = {
+        x = entity.position.x + external_loader_x_offset,
+        y = entity.position.y + external_loader_y_offset
+    }
+    local external_loader = entity.surface.create_entity{
+        name = "express-loader",
+        position = external_loader_position,
+        direction = direction,
+        force = game.forces.neutral,
+        create_build_effect_smoke = false,
+        move_stuck_players = true,
+    }
+
     --[[ Create chest ]]
     local chest_position = {
         x = entity.position.x + chest_x_offset,
@@ -70,7 +92,7 @@ local create_io = function(type, entity, direction)
         name = "wooden-chest",
         position = chest_position,
         direction = direction,
-        force = entity.force,
+        force = game.forces.neutral,
         create_build_effect_smoke = false,
         move_stuck_players = true,
         bar = 1, -- Only allow 1 slot in the chest to avoid excessive buffer
@@ -82,15 +104,30 @@ local create_io = function(type, entity, direction)
             chest_position
         )
     end
+
     --[[ Module outputs require input loaders ]]
     if type == "output" then
         loader.loader_type = "input"
+        external_loader.loader_type = "output"
     elseif type == "input" then
         loader.loader_type = "output"
+        external_loader.loader_type = "input"
     end
+
+    --[[ Set other entity properties ]]
+    loader.destructible = false
+    loader.minable = false
+    loader.operable = false
+    external_loader.destructible = false
+    external_loader.minable = false
+    external_loader.operable = false
+    chest.destructible = false
+    chest.minable = false
+    chest.operable = false
+
     return {
         type = type,
-        entities = {loader, chest}, -- Entities to remove on module removal
+        entities = {loader, chest, external_loader}, -- Entities to remove on module removal
         internal_chest = chest,
         external_chest = entity,
     }
@@ -215,16 +252,12 @@ local check_if_new_module = function(entity)
     end
 
     -- Filter to have an array of only the entities making up the wall
-    local filtered_entities = {}
-    for _,v in pairs(entities) do
-        if v.position.x == min_x 
-        or v.position.x == max_x
-        or v.position.y == min_y 
-        or v.position.y == max_y
-        then
-            table.insert(filtered_entities, v)
-        end
-    end
+    local filtered_entities = filter_table(entities, function(i)
+        return i.position.x == max_x
+        or i.position.y == max_y
+        or i.position.x == min_x
+        or i.position.y == min_y
+    end)
 
     -- If the entity triggering the event isn't part of the wall, ignore
     local entity_is_part_of_wall = false
@@ -244,8 +277,8 @@ local check_if_new_module = function(entity)
     and max_y_count > MIN_MODULE_SIZE
     and entity_is_part_of_wall
     then
-        game.print("Module created")
-        
+        -- game.print("Module created")
+
         -- Create IO ports
         local ports = {}
         for _,v in pairs(filtered_entities) do
@@ -279,15 +312,29 @@ local check_if_new_module = function(entity)
                     combinator = create_combinator(v)
                     primary = true
                 else
+                    -- Try to find a primary module with the same ID
                     combinator = v.entity
-                    combinator.get_or_create_control_behavior().set_signal(2, {
-                        signal = {
-                            type = "virtual",
-                            name = "signal-green"
-                        },
-                        count = 0
-                    })
-                    primary = false
+                    local primary_module = get_primary_module(combinator.get_or_create_control_behavior().parameters[1].count)
+                    if primary_module ~= false then
+                        primary = false
+                        combinator.get_or_create_control_behavior().set_signal(2, {
+                            signal = {
+                                type = "virtual",
+                                name = "signal-green"
+                            },
+                            count = 0
+                        })
+                    else
+                        -- If we didn't find a module with this ID, assign this module as the primary
+                        primary = true
+                        combinator.get_or_create_control_behavior().set_signal(2, {
+                            signal = {
+                                type = "virtual",
+                                name = "signal-green"
+                            },
+                            count = 1
+                        })
+                    end
                 end
             end
         end
