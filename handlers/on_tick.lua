@@ -110,29 +110,34 @@ return function (event)
     -- on_tick handler
     -- game.print(event.tick)
 
-    if event.tick % 30 == 0 then
-        local secondary_module_operations_target = {}
+    local secondary_module_operations_target = {}
 
-        for _, module in pairs(
-            filter_table(
-                global.factory_modules.modules,
-                function (module)
-                    return module.primary
-                end
-            )
-        ) do
+    for _, module in pairs(
+        filter_table(
+            global.factory_modules.modules,
+            function (module)
+                return module.primary
+            end
+        )
+    ) do
+        if event.tick % 32 == module.module_id % 32 then
             local io_operations = update_primary_module(module)
             secondary_module_operations_target[module.module_id] = io_operations
         end
+    end
 
-        for _, module in pairs(
-            filter_table(
-                global.factory_modules.modules,
-                function (module)
-                    return not module.primary
-                end
-            )
-        ) do
+    for _, module in pairs(
+        filter_table(
+            global.factory_modules.modules,
+            function (module)
+                return not module.primary
+            end
+        )
+    ) do
+        if event.tick % 32 == module.module_id % 32 
+            and secondary_module_operations_target[module.module_id] ~= nil -- Nil when there is no primary module
+            and module.active -- Module gets deactivated if there is construction in progress or no power
+        then
             update_secondary_module(module, secondary_module_operations_target[module.module_id])
         end
     end
