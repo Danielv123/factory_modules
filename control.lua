@@ -6,6 +6,8 @@ local wall_segment_filter = {
     {filter = "name", name = "stone-wall"},
     {filter = "name", name = "steel-chest"},
     {filter = "name", name = "wooden-chest"},
+    {filter = "name", name = "constant-combinator"},
+    {filter = "name", name = "gate"},
 }
 
 local function init()
@@ -16,9 +18,13 @@ local function init()
     if global.factory_modules.modules == nil then
         global.factory_modules.modules = {}
     end
+    if global.factory_modules.module_id_counter == nil then
+        global.factory_modules.module_id_counter = 0
+    end
 end
 script.on_init(init)
 script.on_configuration_changed(init)
+script.on_nth_tick(60, init)
 
 script.on_event(
     defines.events.on_built_entity,

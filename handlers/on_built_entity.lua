@@ -1,9 +1,10 @@
 local MIN_MODULE_SIZE = require("constants").MIN_MODULE_SIZE
+local filter_table = require("util.filter_table")
 
 local find_adjacent = function(entity)
     local entities = entity.surface.find_entities_filtered{
         area = {{entity.position.x - 1, entity.position.y - 1}, {entity.position.x + 1, entity.position.y + 1}},
-        name = {"stone-wall", "steel-chest", "wooden-chest"}
+        name = {"stone-wall", "steel-chest", "wooden-chest", "constant-combinator", "gate"}
     }
     return entities
 end
@@ -51,7 +52,15 @@ local create_io = function(type, entity, direction)
         direction = loader_direction,
         force = entity.force,
         create_build_effect_smoke = false,
+        move_stuck_players = true,
     }
+    if loader == nil then
+        -- Loader was not created, probably because it was built by bots already.
+        loader = entity.surface.find_entity(
+            "express-loader",
+            loader_position
+        )
+    end
     --[[ Create chest ]]
     local chest_position = {
         x = entity.position.x + chest_x_offset,
@@ -63,7 +72,16 @@ local create_io = function(type, entity, direction)
         direction = direction,
         force = entity.force,
         create_build_effect_smoke = false,
+        move_stuck_players = true,
+        bar = 1, -- Only allow 1 slot in the chest to avoid excessive buffer
     }
+    if chest == nil then
+        -- Loader was not created, probably because it was built by bots already.
+        chest = entity.surface.find_entity(
+            "wooden-chest",
+            chest_position
+        )
+    end
     --[[ Module outputs require input loaders ]]
     if type == "output" then
         loader.loader_type = "input"
@@ -80,8 +98,35 @@ end
 -- game.print(game.player.selected.direction)
 -- create_io("output", game.player.selected, game.player.selected.direction)
 
-local create_combinator = function(entity)
+local create_combinator = function(entity_container)
+    local new_entity = {
+        name = "constant-combinator",
+        position = entity_container.entity.position,
+        force = entity_container.entity.force,
+        create_build_effect_smoke = false,
+        move_stuck_players = true,
+    }
+    local surface = entity_container.entity.surface
+    entity_container.entity.destroy()
+    local combinator = surface.create_entity(new_entity)
 
+    -- Set combinator to contain module information
+    local module_id = global.factory_modules.module_id_counter + 1
+    global.factory_modules.module_id_counter = module_id
+    combinator.get_or_create_control_behavior().parameters = {
+        {
+            index = 1,
+            signal = {type = "virtual", name = "signal-info"},
+            count = module_id, -- Module ID, used for finding secondary nodes. Carried over when blueprinted
+        },{
+            index = 2,
+            signal = {type = "virtual", name = "signal-green"},
+            count = 1, -- 1 = Primary module, 0 = Secondary module
+        }
+    }
+
+    entity_container.entity = combinator
+    return combinator
 end
 
 -- Check if the walls are arranged in a rectangle
@@ -90,6 +135,8 @@ local check_if_new_module = function(entity)
         checked = false,
         entity = entity
     }}
+
+    local surface = entity.surface
 
     -- Find adjacent entities
     local number_unchecked = 1
@@ -198,15 +245,6 @@ local check_if_new_module = function(entity)
     and entity_is_part_of_wall
     then
         game.print("Module created")
-        local visualization = {
-            rendering.draw_rectangle({
-                color = {r = 0, g = 1, b = 0, a = 0.5},
-                filled = false,
-                left_top = {x = min_x, y = min_y},
-                right_bottom = {x = max_x, y = max_y},
-                surface = entity.surface,
-            })
-        }
         
         -- Create IO ports
         local ports = {}
@@ -232,25 +270,44 @@ local check_if_new_module = function(entity)
             end
         end
 
-        -- Create corner combinators to hold module information
-        local combinators = {}
+        -- Create corner combinator to hold module information
+        local primary
+        local combinator
         for _,v in pairs(filtered_entities) do
             if v.position.x == min_x and v.position.y == min_y then
-                table.insert(combinators, create_combinator(v.entity, "module_min_x_min_y", "module_min_x_min_y"))
-            end
-            if v.position.x == min_x and v.position.y == max_y then
-                table.insert(combinators, create_combinator(v.entity, "module_min_x_max_y", "module_min_x_max_y"))
-            end
-            if v.position.x == max_x and v.position.y == min_y then
-                table.insert(combinators, create_combinator(v.entity, "module_max_x_min_y", "module_max_x_min_y"))
-            end
-            if v.position.x == max_x and v.position.y == max_y then
-                table.insert(combinators, create_combinator(v.entity, "module_max_x_max_y", "module_max_x_max_y"))
+                if v.entity.name ~= "constant-combinator" then
+                    combinator = create_combinator(v)
+                    primary = true
+                else
+                    combinator = v.entity
+                    combinator.get_or_create_control_behavior().set_signal(2, {
+                        signal = {
+                            type = "virtual",
+                            name = "signal-green"
+                        },
+                        count = 0
+                    })
+                    primary = false
+                end
             end
         end
 
+        -- Visualize module
+        local border_color = {r = 0, g = 1, b = 0, a = 0.5}
+        if not primary then border_color = {r = 0, g = 0, b = 1, a = 0.5} end
+        local visualization = {
+            rendering.draw_rectangle({
+                color = border_color,
+                filled = false,
+                left_top = {x = min_x, y = min_y},
+                right_bottom = {x = max_x, y = max_y},
+                surface = surface,
+            })
+        }
+
         table.insert(global.factory_modules.modules, {
-            primary = true,
+            primary = primary,
+            combinator = combinator,
             entities = filtered_entities,
             ports = ports,
             position = {
@@ -263,8 +320,7 @@ local check_if_new_module = function(entity)
                 max_x,
                 max_y
             },
-            visualization = visualization,
-            unit_number = entity.unit_number
+            visualization = visualization
         })
     end
 
