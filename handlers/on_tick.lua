@@ -1,6 +1,8 @@
+local constants = require "constants"
 local to_relative_position = require "util.module.to_relative_position"
 local from_relative_position = require "util.module.from_relative_position"
 local filter_table = require "util.filter_table"
+local check_module_active = require "util.module.check_module_active"
 
 --[[
     on_tick.lua
@@ -120,7 +122,7 @@ return function (event)
             end
         )
     ) do
-        if event.tick % 32 == module.module_id % 32 then
+        if event.tick % constants.MODULE_UPDATE_INTERVAL == module.module_id % constants.MODULE_UPDATE_INTERVAL then
             local io_operations = update_primary_module(module)
             secondary_module_operations_target[module.module_id] = io_operations
         end
@@ -134,11 +136,15 @@ return function (event)
             end
         )
     ) do
-        if event.tick % 32 == module.module_id % 32 
+        if event.tick % constants.MODULE_UPDATE_INTERVAL == module.module_id % constants.MODULE_UPDATE_INTERVAL
             and secondary_module_operations_target[module.module_id] ~= nil -- Nil when there is no primary module
             and module.active -- Module gets deactivated if there is construction in progress or no power
         then
             update_secondary_module(module, secondary_module_operations_target[module.module_id])
+        end
+        -- Update active status periodically
+        if event.tick % constants.MODULE_ACTIVE_CHECK_INTERVAL == (module.module_id + 10) % constants.MODULE_ACTIVE_CHECK_INTERVAL then
+            check_module_active(module)
         end
     end
 end

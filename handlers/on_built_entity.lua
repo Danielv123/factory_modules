@@ -4,6 +4,7 @@ local table_contains = require "util.table_contains"
 local get_primary_module = require "util.module.get_primary"
 local handle_construction_in_module = require "util.module.handle_construction_in_module"
 local check_if_entity_is_inside_module = require "util.module.check_if_entity_is_inside_module"
+local visualize_module                 = require "util.visualize_module"
 
 local find_adjacent = function(entity)
     local entities = entity.surface.find_entities_filtered{
@@ -342,19 +343,6 @@ local check_if_new_module = function(entity)
             end
         end
 
-        -- Visualize module
-        local border_color = {r = 0, g = 1, b = 0, a = 0.5}
-        if not primary then border_color = {r = 0, g = 0, b = 1, a = 0.5} end
-        local visualization = {
-            rendering.draw_rectangle({
-                color = border_color,
-                filled = false,
-                left_top = {x = min_x, y = min_y},
-                right_bottom = {x = max_x, y = max_y},
-                surface = surface,
-            })
-        }
-
         table.insert(global.factory_modules.modules, {
             primary = primary,
             active = true,
@@ -373,8 +361,9 @@ local check_if_new_module = function(entity)
                 max_x = max_x,
                 max_y = max_y
             },
-            visualization = visualization
+            visualization = {},
         })
+        visualize_module(global.factory_modules.modules[#global.factory_modules.modules])
     end
 
     return true
