@@ -7,7 +7,7 @@ local check_if_module_should_be_removed = function (event)
     -- Check if the entity is part of a module
     for k,v in pairs(global.factory_modules.modules) do
         for index,entity in pairs(v.entities) do
-            if not entity.entity.valid or entity.entity.unit_number == event.entity.unit_number then
+            if not entity.entity.valid or not event.entity.valid or entity.entity.unit_number == event.entity.unit_number then
                 -- Remove special entities connected to the module ports
                 for _,port in pairs(v.ports) do
                     for _,port_entity in pairs(port.entities) do
@@ -16,6 +16,10 @@ local check_if_module_should_be_removed = function (event)
                         end
                     end
                 end
+                if v.electric_interface ~= nil and v.electric_interface.valid then
+                    v.electric_interface.destroy()
+                end
+
                 -- Remove the module
                 global.factory_modules.modules[k] = nil
                 -- Remove the visualization
@@ -35,9 +39,11 @@ return function(event)
         end
 
         -- Mirror deconstruction inside modules
-        local is_inside_module = check_if_entity_is_inside_module(event.entity)
-        if is_inside_module then
-            handle_deconstruction_in_module(is_inside_module.module, is_inside_module.entity)
+        if event.entity.valid and event.entity.type ~= "electric-energy-interface" then
+            local is_inside_module = check_if_entity_is_inside_module(event.entity)
+            if is_inside_module then
+                handle_deconstruction_in_module(is_inside_module.module, is_inside_module.entity)
+            end
         end
     end
 end

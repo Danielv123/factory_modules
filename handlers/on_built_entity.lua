@@ -170,6 +170,24 @@ local create_combinator = function(entity_container)
     return combinator
 end
 
+local create_electric_interface = function (params)
+    local electric_interface = params.surface.create_entity({
+        name = "electric-energy-interface",
+        position = params.position,
+        force = game.forces.neutral,
+        surface = params.surface,
+        create_build_effect_smoke = false,
+        move_stuck_players = true,
+    })
+    electric_interface.destructible = false
+    electric_interface.minable = false
+    -- electric_interface.operable = false
+    electric_interface.power_production = 0
+    electric_interface.power_usage = 0
+    electric_interface.electric_buffer_size = 10
+    return electric_interface
+end
+
 -- Check if the walls are arranged in a rectangle
 local check_if_new_module = function(entity)
     local entities = {{
@@ -307,6 +325,20 @@ local check_if_new_module = function(entity)
             end
         end
 
+        -- Create electic-energy-interface to simulate power draw
+        local electric_interface = create_electric_interface({
+            position = {
+                x = min_x + 1,
+                y = min_y + 1,
+            },
+            surface = entity.surface,
+        })
+        table.insert(filtered_entities, {
+            checked = true,
+            entity = electric_interface,
+            position = electric_interface.position,
+        })
+
         -- Create corner combinator to hold module information
         local primary
         local combinator
@@ -343,10 +375,11 @@ local check_if_new_module = function(entity)
             end
         end
 
-        table.insert(global.factory_modules.modules, {
+        local module = {
             primary = primary,
             active = true,
             combinator = combinator,
+            electric_interface = electric_interface,
             module_id = combinator.get_or_create_control_behavior().parameters[1].count,
             entities = filtered_entities,
             ports = ports,
@@ -363,8 +396,9 @@ local check_if_new_module = function(entity)
             },
             visualization = {},
             force = entity.force,
-        })
-        visualize_module(global.factory_modules.modules[#global.factory_modules.modules])
+        }
+        visualize_module(module)
+        table.insert(global.factory_modules.modules, module)
     end
 
     return true
