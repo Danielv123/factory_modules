@@ -1,9 +1,9 @@
 local constants = require "constants"
-local to_relative_position = require "util.module.to_relative_position"
-local from_relative_position = require "util.module.from_relative_position"
-local filter_table = require "util.filter_table"
-local check_module_active = require "util.module.secondary.check_module_active"
-local update_power_consumption = require "util.module.primary.update_power_consumption"
+local to_relative_position = require "control.util.module.to_relative_position"
+local from_relative_position = require "control.util.module.from_relative_position"
+local filter_table = require "control.util.filter_table"
+local check_module_active = require "control.util.module.secondary.check_module_active"
+local update_power_consumption = require "control.util.module.primary.update_power_consumption"
 
 --[[
     on_tick.lua

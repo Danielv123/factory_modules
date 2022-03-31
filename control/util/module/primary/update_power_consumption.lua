@@ -1,4 +1,4 @@
-local visualize_module = require "util.module.visualize_module"
+local visualize_module = require "control.util.module.visualize_module"
 --[[
     Get module power consumption
 ]]

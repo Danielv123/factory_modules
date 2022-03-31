@@ -1,10 +1,10 @@
 local constants = require "constants"
-local filter_table = require "util.filter_table"
-local table_contains = require "util.table_contains"
-local get_primary_module = require "util.module.get_primary"
-local handle_construction_in_module = require "util.module.handle_construction_in_module"
-local check_if_entity_is_inside_module = require "util.module.check_if_entity_is_inside_module"
-local visualize_module = require "util.module.visualize_module"
+local filter_table = require "control.util.filter_table"
+local table_contains = require "control.util.table_contains"
+local get_primary_module = require "control.util.module.get_primary"
+local handle_construction_in_module = require "control.util.module.handle_construction_in_module"
+local check_if_entity_is_inside_module = require "control.util.module.check_if_entity_is_inside_module"
+local visualize_module = require "control.util.module.visualize_module"
 
 local find_adjacent = function(entity)
     local entities = entity.surface.find_entities_filtered{

@@ -1,4 +1,4 @@
-local format_power = require "util.format_power"
+local format_power = require "control.util.format_power"
 return function (module)
     -- Remove old visualizations
     for _,v in pairs(module.visualization) do
