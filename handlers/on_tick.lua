@@ -73,6 +73,10 @@ local process_secondary_module_operations = function (module, io_operations, com
                 if items[operation.item_name] ~= nil and items[operation.item_name] >= operation.item_count then
                     if commit then
                         origin_inventory.remove{name=operation.item_name, count=operation.item_count}
+                        -- Add to flow statistics
+                        if module.force then
+                            module.force.item_production_statistics.on_flow(operation.item_name, -operation.item_count)
+                        end
                     end
                 else
                     no_space = true
@@ -88,6 +92,11 @@ local process_secondary_module_operations = function (module, io_operations, com
                         -- Remove the items again if we aren't in commit mode
                         if not commit then
                             destination_inventory.remove{name=operation.item_name, count=inserted}
+                        else
+                            -- Add to flow statistics
+                            if module.force then
+                                module.force.item_production_statistics.on_flow(operation.item_name, operation.item_count)
+                            end
                         end
                     end
                 else

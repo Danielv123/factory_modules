@@ -362,6 +362,7 @@ local check_if_new_module = function(entity)
                 max_y = max_y
             },
             visualization = {},
+            force = entity.force,
         })
         visualize_module(global.factory_modules.modules[#global.factory_modules.modules])
     end

@@ -19,7 +19,7 @@ return function (module)
     }
 
     -- Visualize power consumption
-    if module.primary then
+    if module.primary and module.power_consumption ~= nil then
         table.insert(visualization, rendering.draw_text({
             text = "Power consumption: " .. format_power(module.power_consumption),
             color = {r = 1, g = 1, b = 1, a = 1},
