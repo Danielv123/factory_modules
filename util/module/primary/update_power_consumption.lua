@@ -28,6 +28,12 @@ return function (module)
             if effects ~= nil and effects.consumption ~= nil then
                 modifier = effects.consumption.bonus
             end
+            if max_buffer > 0 then
+                -- Approximate slowdown when out of power
+                -- The relationship between speed and buffer capacity is nonlinear, so this gets it slightly wrong
+                -- by underestimating power consumption on the lower range, but it's close enough for now.
+                modifier = modifier * (energy_in_buffer / max_buffer)
+            end
             if prototype.energy_usage ~= nil then
                 -- Multiply by activity factor
                 -- ???
@@ -36,8 +42,6 @@ return function (module)
             end
         end
     end
-    -- local power_in_kw = power_consumption_per_tick * 60 / 1000
-    -- game.print("Module power consumption: " .. power_in_kw .. " kW for module " .. module.module_id)
     if module.power_consumption ~= power_consumption_per_tick then
         module.power_consumption = power_consumption_per_tick
         visualize_module(module)
