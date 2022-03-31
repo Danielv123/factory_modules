@@ -124,6 +124,7 @@ return function (event)
 
     local secondary_module_operations_target = {}
 
+    -- Update primary modules
     for _, module in pairs(
         filter_table(
             global.factory_modules.modules,
@@ -142,6 +143,7 @@ return function (event)
         end
     end
 
+    -- Update secondary modules
     for _, module in pairs(
         filter_table(
             global.factory_modules.modules,
@@ -159,6 +161,19 @@ return function (event)
         -- Update active status periodically
         if event.tick % constants.MODULE_ACTIVE_CHECK_INTERVAL == (module.module_id + 10) % constants.MODULE_ACTIVE_CHECK_INTERVAL then
             check_module_active(module)
+        end
+    end
+
+    -- Check for delayed ghost clone tasks
+    if global.factory_modules.clone_tasks ~= nil then
+        for _, task in pairs(global.factory_modules.clone_tasks) do
+            if task.tick == event.tick then
+                task.entity.clone({
+                    force = task.force,
+                    position = task.position,
+                    surface = task.module.surface,
+                })
+            end
         end
     end
 end

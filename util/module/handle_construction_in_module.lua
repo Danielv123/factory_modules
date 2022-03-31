@@ -6,34 +6,54 @@
 
 return function (module, entity)
     for _, mod in pairs(global.factory_modules.modules) do
+        -- Mirror construction inside modules
         if mod.module_id == module.module_id and mod ~= module then
             -- Calculate position relative to the module
             local relative_position = {
                 x = entity.position.x - module.position.x + mod.position.x,
                 y = entity.position.y - module.position.y + mod.position.y,
             }
-            -- Place ghost version of the entity
-            local name = entity.name
-            if name == "entity-ghost" then
-                name = entity.ghost_name
-            end
-            local obsctructions = entity.surface.find_entities_filtered{
-                position = relative_position,
-                radius = 0.5
-            }
-            if #obsctructions < 1 then
-                local ghost = entity.surface.create_entity{
-                    name = "entity-ghost",
+            if entity.name == "entity-ghost" then
+                table.insert(global.factory_modules.clone_tasks, {
+                    entity = entity,
                     position = relative_position,
                     force = entity.force,
-                    direction = entity.direction,
                     player = entity.last_user,
-                    fast_replace = true,
-                    spill = false,
-                    move_stuck_players = true,
-                    inner_name = name,
+                    module = module,
+                    tick = game.tick + 1,
+                })
+            else
+                -- Place ghost version of the entity
+                local name = entity.name
+                local obsctructions = entity.surface.find_entities_filtered{
+                    position = relative_position,
+                    radius = 0.5
                 }
+                if #obsctructions < 1 then
+                    local belt_to_ground_type = nil
+                    if entity.type == "underground-belt" then
+                        belt_to_ground_type = entity.belt_to_ground_type
+                    end
+                    local ghost = entity.surface.create_entity{
+                        name = "entity-ghost",
+                        position = relative_position,
+                        force = entity.force,
+                        direction = entity.direction,
+                        player = entity.last_user,
+                        fast_replace = true,
+                        spill = false,
+                        move_stuck_players = true,
+
+                        -- Transfer data from entity
+                        inner_name = name,
+                        type = belt_to_ground_type,
+                    }
+                end
             end
         end
+    end
+    -- Set entities in secondary modules to inactive
+    if not module.primary then
+        entity.active = false
     end
 end

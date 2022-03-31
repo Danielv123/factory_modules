@@ -13,6 +13,9 @@ local function init()
     if global.factory_modules.module_id_counter == nil then
         global.factory_modules.module_id_counter = 0
     end
+    if global.factory_modules.clone_tasks == nil then
+        global.factory_modules.clone_tasks = {}
+    end
 end
 script.on_init(init)
 script.on_configuration_changed(init)
