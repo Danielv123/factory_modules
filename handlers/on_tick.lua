@@ -175,5 +175,11 @@ return function (event)
                 })
             end
         end
+        global.factory_modules.clone_tasks = filter_table(
+            global.factory_modules.clone_tasks,
+            function (task)
+                return task.tick > event.tick
+            end
+        )
     end
 end
