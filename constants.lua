@@ -3,4 +3,5 @@ return {
     WALL_PIECES = {"stone-wall", "steel-chest", "wooden-chest", "constant-combinator", "gate"}, -- Allowed module wall pieces
     MODULE_UPDATE_INTERVAL = 32, -- How often modules are updated
     MODULE_ACTIVE_CHECK_INTERVAL = 32, -- How often modules are checked for validity
+    MODULE_POWER_UPDATE_INTERVAL = 32, -- How often modules are checked for power consumption
 }

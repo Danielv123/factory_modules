@@ -1,3 +1,4 @@
+local format_power = require "util.format_power"
 return function (module)
     -- Remove old visualizations
     for _,v in pairs(module.visualization) do
@@ -16,6 +17,19 @@ return function (module)
             surface = module.surface,
         })
     }
+
+    -- Visualize power consumption
+    if module.primary then
+        table.insert(visualization, rendering.draw_text({
+            text = "Power consumption: " .. format_power(module.power_consumption),
+            color = {r = 1, g = 1, b = 1, a = 1},
+            surface = module.surface,
+            target = {
+                x = module.bounding_box.min_x + 1,
+                y = module.bounding_box.min_y + 1
+            }
+        }))
+    end
 
     module.visualization = visualization
 end

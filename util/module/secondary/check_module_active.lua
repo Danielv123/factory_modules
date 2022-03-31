@@ -1,4 +1,4 @@
-local visualize_module = require "util.visualize_module"
+local visualize_module = require "util.module.visualize_module"
 --[[
     Secondary modules don't compute their internals, so we need to check the validity of the inside manually.
     We do that by disabling "active" when we detect issues like missing power or missing entities.

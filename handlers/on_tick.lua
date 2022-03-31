@@ -2,7 +2,8 @@ local constants = require "constants"
 local to_relative_position = require "util.module.to_relative_position"
 local from_relative_position = require "util.module.from_relative_position"
 local filter_table = require "util.filter_table"
-local check_module_active = require "util.module.check_module_active"
+local check_module_active = require "util.module.secondary.check_module_active"
+local update_power_consumption = require "util.module.primary.update_power_consumption"
 
 --[[
     on_tick.lua
@@ -125,6 +126,10 @@ return function (event)
         if event.tick % constants.MODULE_UPDATE_INTERVAL == module.module_id % constants.MODULE_UPDATE_INTERVAL then
             local io_operations = update_primary_module(module)
             secondary_module_operations_target[module.module_id] = io_operations
+        end
+        -- Update power consumption perioidically
+        if event.tick % constants.MODULE_POWER_UPDATE_INTERVAL == module.module_id % constants.MODULE_POWER_UPDATE_INTERVAL then
+            update_power_consumption(module)
         end
     end
 
