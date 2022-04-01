@@ -2,6 +2,7 @@ local get_primary = require "control.util.module.get_primary"
 local constants   = require "constants"
 return function (module)
     -- Update electric energy interface power consumption with the same as the primary module
+    if not module.electric_interface.valid then return end
     local primary_module = get_primary(module.module_id)
     if primary_module then
         -- Set buffer size to amount of electricity needed to power the module for the entirety of MODULE_POWER_UPDATE_INTERVAL

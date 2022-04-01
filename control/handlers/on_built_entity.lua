@@ -172,7 +172,7 @@ end
 
 local create_electric_interface = function (params)
     local electric_interface = params.surface.create_entity({
-        name = "factory-module-electric-energy-interface",
+        name = "factory-module-electric-energy-interface-"..params.number,
         position = params.position,
         force = game.forces.neutral,
         surface = params.surface,
@@ -181,10 +181,10 @@ local create_electric_interface = function (params)
     })
     electric_interface.destructible = false
     electric_interface.minable = false
-    -- electric_interface.operable = false
+    electric_interface.operable = false
     electric_interface.power_production = 0
     electric_interface.power_usage = 0
-    electric_interface.electric_buffer_size = 10
+    electric_interface.electric_buffer_size = 0
     return electric_interface
 end
 
@@ -196,6 +196,7 @@ local check_if_new_module = function(entity)
     }}
 
     local surface = entity.surface
+    local force = entity.force
 
     -- Find adjacent entities
     local number_unchecked = 1
@@ -325,20 +326,6 @@ local check_if_new_module = function(entity)
             end
         end
 
-        -- Create electic-energy-interface to simulate power draw
-        local electric_interface = create_electric_interface({
-            position = {
-                x = min_x + 1,
-                y = min_y + 1,
-            },
-            surface = entity.surface,
-        })
-        table.insert(filtered_entities, {
-            checked = true,
-            entity = electric_interface,
-            position = electric_interface.position,
-        })
-
         -- Create corner combinator to hold module information
         local primary
         local combinator
@@ -375,12 +362,29 @@ local check_if_new_module = function(entity)
             end
         end
 
+        local module_id = combinator.get_or_create_control_behavior().parameters[1].count
+
+        -- Create electic-energy-interface to simulate power draw
+        local electric_interface = create_electric_interface({
+            position = {
+                x = min_x + 1,
+                y = min_y + 1,
+            },
+            surface = surface,
+            number = (module_id % constants.ENERGY_INTERFACE_COUNT) + 1,
+        })
+        table.insert(filtered_entities, {
+            checked = true,
+            entity = electric_interface,
+            position = electric_interface.position,
+        })
+
         local module = {
             primary = primary,
             active = true,
             combinator = combinator,
             electric_interface = electric_interface,
-            module_id = combinator.get_or_create_control_behavior().parameters[1].count,
+            module_id = module_id,
             entities = filtered_entities,
             ports = ports,
             position = {
@@ -395,7 +399,7 @@ local check_if_new_module = function(entity)
                 max_y = max_y
             },
             visualization = {},
-            force = entity.force,
+            force = force,
             has_sufficient_power = false,
         }
         visualize_module(module)
