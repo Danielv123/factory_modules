@@ -172,7 +172,7 @@ end
 
 local create_electric_interface = function (params)
     local electric_interface = params.surface.create_entity({
-        name = "electric-energy-interface",
+        name = "factory-module-electric-energy-interface",
         position = params.position,
         force = game.forces.neutral,
         surface = params.surface,
@@ -396,6 +396,7 @@ local check_if_new_module = function(entity)
             },
             visualization = {},
             force = entity.force,
+            has_sufficient_power = false,
         }
         visualize_module(module)
         table.insert(global.factory_modules.modules, module)

@@ -26,6 +26,11 @@ local is_entity_powered = function (entity)
 end
 
 local is_module_active = function (module)
+    -- Check if the module has sufficient power
+    if not module.has_sufficient_power then
+        return false
+    end
+
     local entities_inside_module = module.surface.find_entities_filtered({
         area = {
             left_top = {
@@ -56,7 +61,7 @@ local is_module_active = function (module)
     -- Check if all powered entities are powered
     for _, entity in pairs(entities_inside_module) do
         if not is_entity_powered(entity) then
-            return
+            return false
         end
     end
 

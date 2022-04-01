@@ -4,6 +4,7 @@ local from_relative_position = require "control.util.module.from_relative_positi
 local filter_table = require "control.util.filter_table"
 local check_module_active = require "control.util.module.secondary.check_module_active"
 local update_power_consumption = require "control.util.module.primary.update_power_consumption"
+local update_power_usage       = require "control.util.module.secondary.update_power_usage"
 
 --[[
     on_tick.lua
@@ -161,6 +162,10 @@ return function (event)
         -- Update active status periodically
         if event.tick % constants.MODULE_ACTIVE_CHECK_INTERVAL == (module.module_id + 10) % constants.MODULE_ACTIVE_CHECK_INTERVAL then
             check_module_active(module)
+        end
+        -- Update power consumption perioidically
+        if event.tick % constants.MODULE_POWER_UPDATE_INTERVAL == module.module_id % constants.MODULE_POWER_UPDATE_INTERVAL then
+            update_power_usage(module)
         end
     end
 

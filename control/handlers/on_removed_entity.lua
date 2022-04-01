@@ -39,7 +39,7 @@ return function(event)
         end
 
         -- Mirror deconstruction inside modules
-        if event.entity.valid and event.entity.type ~= "electric-energy-interface" then
+        if event.entity.valid and event.entity.type ~= "factory-module-electric-energy-interface" then
             local is_inside_module = check_if_entity_is_inside_module(event.entity)
             if is_inside_module then
                 handle_deconstruction_in_module(is_inside_module.module, is_inside_module.entity)
