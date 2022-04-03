@@ -3,6 +3,7 @@
 ]]
 
 return function (event)
+    game.print("Migrating factory modules to vanilla")
     for _, module in pairs(global.factory_modules.modules) do
         -- Remove io ports and replace with belts
         for _, port in pairs(module.ports) do

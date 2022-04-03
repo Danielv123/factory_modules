@@ -44,7 +44,7 @@ return function (module)
     else
         primary_module = get_primary(module.module_id)
     end
-    if primary_module.contains_illegal_entities then
+    if primary_module ~= nil and primary_module.contains_illegal_entities then
         table.insert(visualization, rendering.draw_text({
             text = "Primary module contains illegal entities",
             color = {r = 1, g = 0, b = 0, a = 1},
