@@ -1,3 +1,4 @@
 package-lock.json
-graphics/icons/generated/*
-node_modules
+graphics/icons/generated/**
+node_modules/**
+dist

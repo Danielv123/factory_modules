@@ -1,6 +1,6 @@
 const Jimp = require("jimp");
 
-(async () => {
+module.exports = async function () {
     const font = await Jimp.loadFont(Jimp.FONT_SANS_32_WHITE)
 
     for (let x = 0; x < 3; x++) {
@@ -20,4 +20,4 @@ const Jimp = require("jimp");
             await image.writeAsync(`./graphics/icons/generated/number_${i}_${x}.png`);
         }
     }
-})()
+}
