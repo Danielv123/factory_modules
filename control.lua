@@ -1,6 +1,7 @@
 local on_built_entity_handler = require "control.handlers.on_built_entity"
 local on_removed_entity_handler = require "control.handlers.on_removed_entity"
 local on_tick_handler = require "control.handlers.on_tick"
+local migrate_to_vanilla = require "control.commands.migrate_to_vanilla"
 
 local function init()
     -- Handle global state
@@ -63,3 +64,6 @@ script.on_event(
     defines.events.on_tick,
     on_tick_handler
 )
+
+-- Register commands
+commands.add_command("migrate_to_vanilla", "Migrate modules to being vanilla compatible", migrate_to_vanilla)

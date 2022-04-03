@@ -134,6 +134,7 @@ local create_io = function(type, entity, direction)
         entities = {loader, chest, external_loader}, -- Entities to remove on module removal
         internal_chest = chest,
         external_chest = entity,
+        direction = direction,
     }
 end
 -- game.print(game.player.selected.direction)
