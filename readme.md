@@ -28,3 +28,5 @@ The module ID is stored in a constant combinator. ID namespaces are seperate for
 ## Setup
 
 `mklink /D C:\Users\danielv\AppData\Roaming\Factorio\mods\factory_modules C:\Users\danielv\Documents\project_files\factory_modules`
+
+`npm run build`

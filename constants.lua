@@ -5,4 +5,12 @@ return {
     MODULE_UPDATE_INTERVAL = 32, -- How often modules are updated
     MODULE_ACTIVE_CHECK_INTERVAL = 32, -- How often modules are checked for validity
     MODULE_POWER_UPDATE_INTERVAL = 32, -- How often modules are checked for power consumption
+    NOT_ALLOWED_IN_MODULE = {
+        "roboport",
+        "logistic-chest-active-provider",
+        "logistic-chest-passive-provider",
+        "logistic-chest-requester",
+        "logistic-chest-buffer",
+        "logistic-chest-storage",
+    }
 }

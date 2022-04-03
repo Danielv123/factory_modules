@@ -1,4 +1,6 @@
 local format_power = require "control.util.format_power"
+local get_primary  = require "control.util.module.get_primary"
+
 return function (module)
     -- Remove old visualizations
     for _,v in pairs(module.visualization) do
@@ -19,6 +21,8 @@ return function (module)
         })
     }
 
+    local text_offset = 0.5
+
     -- Visualize power consumption
     if module.primary and module.power_consumption ~= nil then
         table.insert(visualization, rendering.draw_text({
@@ -27,9 +31,30 @@ return function (module)
             surface = module.surface,
             target = {
                 x = module.bounding_box.min_x + 1,
-                y = module.bounding_box.min_y + 1
+                y = module.bounding_box.min_y + text_offset
             }
         }))
+        text_offset = text_offset + 0.5
+    end
+
+    -- Report illegal entities in primary module
+    local primary_module
+    if module.primary then
+        primary_module = module
+    else
+        primary_module = get_primary(module.module_id)
+    end
+    if primary_module.contains_illegal_entities then
+        table.insert(visualization, rendering.draw_text({
+            text = "Primary module contains illegal entities",
+            color = {r = 1, g = 0, b = 0, a = 1},
+            surface = module.surface,
+            target = {
+                x = module.bounding_box.min_x + 1,
+                y = module.bounding_box.min_y + text_offset
+            }
+        }))
+        text_offset = text_offset + 0.5
     end
 
     module.visualization = visualization

@@ -1,3 +1,6 @@
+local table_contains = require "control.util.table_contains"
+local constants      = require "constants"
+local visualize_module = require "control.util.module.visualize_module"
 --[[
     Deconstruction is allowed in both primary and secondary modules.
     When entities are removed from a module it should also be mirrored as deconstruction orders.
@@ -20,6 +23,32 @@ return function (module, entity)
                     entity_in_mirror.order_deconstruction(entity_in_mirror.force, entity.last_user)
                 end
             end
+        end
+    end
+    -- Check if the module still contains illegal entities
+    if module.primary and module.contains_illegal_entities then
+        local entities = module.surface.find_entities_filtered({
+            area = {
+                left_top = {
+                    x = module.bounding_box.min_x + 1,
+                    y = module.bounding_box.min_y + 1
+                },
+                right_bottom = {
+                    x = module.bounding_box.max_x - 1,
+                    y = module.bounding_box.max_y - 1
+                }
+            },
+        })
+        local contains_illegal_entities = false
+        for _, entity2 in pairs(entities) do
+            if table_contains(constants.NOT_ALLOWED_IN_MODULE, entity2.name) and entity2 ~= entity then
+                contains_illegal_entities = true
+                break
+            end
+        end
+        if not contains_illegal_entities then
+            module.contains_illegal_entities = false
+            visualize_module(module)
         end
     end
 end

@@ -1,3 +1,6 @@
+local table_contains = require "control.util.table_contains"
+local constants      = require "constants"
+local visualize_module = require "control.util.module.visualize_module"
 --[[
     When entities are constructed inside a module it should be mirrored to other modules with the same ID as blueprint ghosts.
     Construction is allowed in both primary and secondary modules.
@@ -55,5 +58,11 @@ return function (module, entity)
     -- Set entities in secondary modules to inactive
     if not module.primary then
         entity.active = false
+    else
+        -- If an illegal entity is built in a primary module, deactivate it
+        if table_contains(constants.NOT_ALLOWED_IN_MODULE, entity.name) then
+            module.contains_illegal_entities = true
+            visualize_module(module)
+        end
     end
 end

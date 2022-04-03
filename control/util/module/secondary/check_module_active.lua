@@ -1,4 +1,5 @@
 local visualize_module = require "control.util.module.visualize_module"
+local get_primary      = require "control.util.module.get_primary"
 --[[
     Secondary modules don't compute their internals, so we need to check the validity of the inside manually.
     We do that by disabling "active" when we detect issues like missing power or missing entities.
@@ -28,6 +29,12 @@ end
 local is_module_active = function (module)
     -- Check if the module has sufficient power
     if not module.has_sufficient_power then
+        return false
+    end
+
+    -- Check if the primary module contains illegal entities
+    local primary_module = get_primary(module.module_id)
+    if primary_module and primary_module.contains_illegal_entities then
         return false
     end
 
