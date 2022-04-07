@@ -1,4 +1,5 @@
 local show_module_list = require "control.user_interface.gui.show_module_list"
+local show_secondary_module_details = require "control.user_interface.gui.show_secondary_module_details"
 return function (event)
     if event.element.name == "module_list_btn" then
         local player = game.players[event.player_index]
@@ -16,5 +17,9 @@ return function (event)
             show_module_list(player, module.module_id)
             return
         end
+    end
+
+    if event.element.name == "secondary_module_group_expand_btn" then
+        show_secondary_module_details(event)
     end
 end

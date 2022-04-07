@@ -2,32 +2,68 @@
     Show a list of all active modules and information about them.
 ]]
 
-local function render_module(parent, module, index)
+local function render_module(parent, module, index, player)
     local module_frame = parent.add({
-        type = "flow",
+        type = "frame",
         name = "module_group_"..index,
         direction = "horizontal",
     })
+    module_frame.style.vertical_align = "center"
+    module_frame.style.width = 320
     local left = module_frame.add({
         type = "flow",
         name = "module_group_left"..index,
-        direction = "vertical",
+        direction = "horizontal",
     })
-    left.style.width = 150
+    left.style.width = 100
+    left.style.vertical_align = "center"
+    left.style.vertically_stretchable = true
+    left.add({
+        type = "label",
+        name = "module_group_label",
+        caption = "Position:",
+    })
     local right = module_frame.add({
         type = "flow",
         name = "module_group_right"..index,
         direction = "vertical",
     })
-    left.add({
-        type = "label",
-        name = "module_group_label",
-        caption = "Position",
-    })
+    right.style.minimal_width = 120
+    right.style.vertical_align = "center"
+    right.style.vertically_stretchable = true
     right.add({
         type = "label",
         name = "module_group_position",
         caption = "X: "..module.position.x.." Y: "..module.position.y,
+    })
+    local buttons = module_frame.add({
+        type = "flow",
+        name = "module_group_buttons"..index,
+        direction = "horizontal",
+    })
+    buttons.add({
+        type = "sprite-button",
+        name = "module_group_goto_btn",
+        sprite = "item/artillery-targeting-remote",
+        tooltip = "Go to module",
+    })
+    -- Expand button
+    local expand_button = buttons.add({
+        type = "sprite-button",
+        name = "secondary_module_group_expand_btn",
+        sprite = "utility/indication_arrow", -- Points up, not down
+        tooltip = "Expand module details",
+    })
+
+    if global.factory_modules.players[player.name] == nil then
+        global.factory_modules.players[player.name] = {}
+    end
+    if global.factory_modules.players[player.name].expand_module_references == nil then
+        global.factory_modules.players[player.name].expand_module_references = {}
+    end
+    table.insert(global.factory_modules.players[player.name].expand_module_references, {
+        module = module,
+        expand_button = expand_button,
     })
 end
 
@@ -111,12 +147,12 @@ local function show_module_list(player, module_id)
                 name = "module_list_info_header",
                 direction = "horizontal",
             })
+            module_info_header.style.vertical_align = "center"
             module_info_header.add({
                 type = "label",
                 name = "module_list_info_header_label",
                 caption = "Module info",
             })
-            module_info_header.style.vertical_align = "center"
             -- Draw module info close button
             module_info_header.add({
                 type = "sprite-button",
@@ -152,7 +188,7 @@ local function show_module_list(player, module_id)
                 direction = "vertical",
             })
             for index, module in pairs(modules[module_id].modules) do
-                render_module(module_info_modules, module, index)
+                render_module(module_info_modules, module, index, player)
             end
         end
     end

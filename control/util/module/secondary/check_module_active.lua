@@ -54,23 +54,29 @@ local is_module_active = function (module)
     -- Check if there are ghosts
     for _, entity in pairs(entities_inside_module) do
         if entity.name == "entity-ghost" then
+            module.contains_ghosts = true
             return false
         end
     end
+    module.contains_ghosts = false
 
     -- Check if marked for deconstruction
     for _, entity in pairs(entities_inside_module) do
         if entity.to_be_deconstructed() then
+            module.marked_for_deconstruction = true
             return false
         end
     end
+    module.marked_for_deconstruction = false
 
     -- Check if all powered entities are powered
     for _, entity in pairs(entities_inside_module) do
         if not is_entity_powered(entity) then
+            module.contains_unpowered_entities = true
             return false
         end
     end
+    module.contains_unpowered_entities = false
 
     return true
 end

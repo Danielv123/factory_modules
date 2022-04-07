@@ -5,6 +5,7 @@ local filter_table = require "control.util.filter_table"
 local check_module_active = require "control.util.module.secondary.check_module_active"
 local update_power_consumption = require "control.util.module.primary.update_power_consumption"
 local update_power_usage       = require "control.util.module.secondary.update_power_usage"
+local draw_secondary_module_details = require "control.user_interface.gui.draw_secondary_module_details"
 
 --[[
     on_tick.lua
@@ -186,5 +187,15 @@ return function (event)
                 return task.tick > event.tick
             end
         )
+    end
+
+    -- Update player GUIs
+    for _, player in pairs(game.players) do
+        if global.factory_modules.players[player.name] == nil then
+            global.factory_modules.players[player.name] = {}
+        end
+        if player.gui.screen.module_list.module_list_split_layout.secondary_module_info_container ~= nil then
+            draw_secondary_module_details.draw(player, global.factory_modules.players[player.name].selected_module_reference)
+        end
     end
 end
