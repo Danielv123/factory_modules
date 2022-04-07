@@ -90,6 +90,15 @@ local draw = function (player, reference)
         label.style.font_color = {r = 1, g = 0, b = 0}
         value.style.font_color = {r = 1, g = 0, b = 0}
     end
+
+    -- Draw minimap
+    local minimap = container.add({
+        type = "minimap",
+        name = "secondary_module_info_minimap",
+        position = reference.module.position,
+        surface_index = reference.module.surface.index,
+        zoom = 0.75,
+    })
 end
 
 return {

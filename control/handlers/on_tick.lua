@@ -194,7 +194,9 @@ return function (event)
         if global.factory_modules.players[player.name] == nil then
             global.factory_modules.players[player.name] = {}
         end
-        if player.gui.screen.module_list.module_list_split_layout.secondary_module_info_container ~= nil then
+        if player.gui.screen.module_list
+        and player.gui.screen.module_list.module_list_split_layout
+        and player.gui.screen.module_list.module_list_split_layout.secondary_module_info_container ~= nil then
             draw_secondary_module_details.draw(player, global.factory_modules.players[player.name].selected_module_reference)
         end
     end
