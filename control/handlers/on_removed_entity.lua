@@ -19,6 +19,9 @@ local check_if_module_should_be_removed = function (event)
                 if v.electric_interface ~= nil and v.electric_interface.valid then
                     v.electric_interface.destroy()
                 end
+                if v.power_pole ~= nil and v.power_pole.valid then
+                    v.power_pole.destroy()
+                end
 
                 -- Remove the module
                 global.factory_modules.modules[k] = nil

@@ -213,6 +213,21 @@ local create_electric_interface = function (params)
     return electric_interface
 end
 
+local create_power_pole = function (params)
+    local power_pole = params.surface.create_entity({
+        name = "big-electric-pole",
+        position = params.position,
+        force = game.forces.neutral,
+        surface = params.surface,
+        create_build_effect_smoke = false,
+        move_stuck_players = true,
+    })
+    power_pole.destructible = false
+    power_pole.minable = false
+    power_pole.operable = false
+    return power_pole
+end
+
 -- Check if the walls are arranged in a rectangle
 local check_if_new_module = function(entity)
     local entities = {{
@@ -446,12 +461,26 @@ local check_if_new_module = function(entity)
             entity = electric_interface,
             position = electric_interface.position,
         })
+        -- Create large power pole to connect module easier
+        local power_pole = create_power_pole({
+            position = {
+                x = min_x + 1,
+                y = min_y + 1,
+            },
+            surface = surface,
+        })
+        table.insert(filtered_entities, {
+            checked = true,
+            entity = power_pole,
+            position = power_pole.position,
+        })
 
         local module = {
             primary = primary,
             active = true,
             combinator = combinator,
             electric_interface = electric_interface,
+            power_pole = power_pole,
             module_id = module_id,
             entities = filtered_entities,
             ports = ports,
