@@ -393,14 +393,16 @@ local check_if_new_module = function(entity)
                     game.print("Invalid transport belt direction")
                     return false
                 end
-                v.entity.destroy()
-                v.entity = surface.create_entity({
-                    name = name,
-                    position = v.position,
-                    force = force,
-                    create_build_effect_smoke = false,
-                    move_stuck_players = true,
-                })
+                if name ~= nil then
+                    v.entity.destroy()
+                    v.entity = surface.create_entity({
+                        name = name,
+                        position = v.position,
+                        force = force,
+                        create_build_effect_smoke = false,
+                        move_stuck_players = true,
+                    })
+                end
             end
 
             if v.entity.name == "steel-chest" then
