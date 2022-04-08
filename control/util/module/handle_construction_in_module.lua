@@ -26,6 +26,7 @@ return function (module, entity)
                     tick = game.tick + 1,
                 })
             else
+                module.power_consumption_is_up_to_date = false
                 -- Place ghost version of the entity
                 local name = entity.name
                 local obsctructions = entity.surface.find_entities_filtered{

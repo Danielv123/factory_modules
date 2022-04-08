@@ -46,5 +46,6 @@ return function (module)
         module.power_consumption = power_consumption_per_tick
         visualize_module(module)
     end
+    module.power_consumption_is_up_to_date = true
     return power_consumption_per_tick
 end

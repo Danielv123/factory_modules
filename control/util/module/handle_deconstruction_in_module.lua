@@ -7,6 +7,7 @@ local visualize_module = require "control.util.module.visualize_module"
 ]]
 
 return function (module, entity)
+    module.power_consumption_is_up_to_date = false
     for _, mod in pairs(global.factory_modules.modules) do
         if mod.module_id == module.module_id and mod ~= module then
             -- Calculate position relative to the module

@@ -140,7 +140,8 @@ return function (event)
             secondary_module_operations_target[module.module_id] = io_operations
         end
         -- Update power consumption perioidically
-        if event.tick % constants.MODULE_POWER_UPDATE_INTERVAL == module.module_id % constants.MODULE_POWER_UPDATE_INTERVAL then
+        if event.tick % constants.MODULE_POWER_UPDATE_INTERVAL == module.module_id % constants.MODULE_POWER_UPDATE_INTERVAL
+        and not module.power_consumption_is_up_to_date then
             update_power_consumption(module)
         end
     end
