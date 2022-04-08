@@ -73,7 +73,9 @@ local create_io = function(type, entity, direction)
     })
     -- game.print("Removing "..#obsctructions.." obstructing belts")
     for _, obstruction in pairs(obsctructions) do
-        obstruction.destroy()
+        if obstruction.valid and obstruction.name ~= "character" then
+            obstruction.destroy()
+        end
     end
 
     --[[ Create loader ]]
