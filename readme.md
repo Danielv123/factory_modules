@@ -69,6 +69,10 @@ Symlink the repository folder to your factorio install for development:
 
     mklink /D C:\Users\danielv\AppData\Roaming\Factorio\mods\factory_modules C:\Users\danielv\Documents\project_files\factory_modules
 
+or
+
+    mklink /D D:\Factorio_1.1.53\mods\factory_modules C:\Users\danielv\Documents\project_files\factory_modules
+
 Install dependencies:
 
     npm install

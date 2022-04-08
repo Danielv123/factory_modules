@@ -56,7 +56,7 @@ return function (module, entity)
         end
     end
     -- Set entities in secondary modules to inactive
-    if not module.primary then
+    if not module.primary and entity.type ~= "item-request-proxy" then
         entity.active = false
     else
         -- If an illegal entity is built in a primary module, deactivate it

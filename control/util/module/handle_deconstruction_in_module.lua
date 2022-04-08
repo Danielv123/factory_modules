@@ -16,7 +16,8 @@ return function (module, entity)
             }
             local entities_in_mirror = entity.surface.find_entities_filtered({
                 position = relative_position,
-                radius = 0.5
+                radius = 0.5,
+                type = entity.type,
             })
             if entities_in_mirror then
                 for _, entity_in_mirror in pairs(entities_in_mirror) do
