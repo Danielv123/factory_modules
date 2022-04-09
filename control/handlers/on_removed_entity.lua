@@ -37,7 +37,7 @@ end
 
 return function(event)
     if event.entity and event.entity.valid then
-        if table_contains(constants.WALL_PIECES, event.entity.name) then
+        if table_contains(constants.WALL_PIECES, event.entity.name) and event.entity.type ~= "transport-belt" then
             check_if_module_should_be_removed(event)
         end
 
