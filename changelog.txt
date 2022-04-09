@@ -1,0 +1,70 @@
+---------------------------------------------------------------------------------------------------
+Version: 0.3.0
+Date: 2022-04-09
+  Features:
+    - Added zoom to map GUI button for locating modules
+    - Fixed close buttons in GUI
+---------------------------------------------------------------------------------------------------
+Version: 0.2.4
+Date: 2022-04-09
+  Bugfixes:
+    - Don't stutter when placing transport belts
+---------------------------------------------------------------------------------------------------
+Version: 0.2.3
+Date: 2022-04-09
+  Optimizations:
+    - Slow down validity check when no players are nearby (4x performance)
+---------------------------------------------------------------------------------------------------
+Version: 0.2.2
+Date: 2022-04-09
+  Bugfixes:
+    - Fixed breaking module creation in 0.2.0
+---------------------------------------------------------------------------------------------------
+Version: 0.2.1
+Date: 2022-04-09
+  Optimizations:
+    - Spread secondary module active check evenly over multiple ticks and made it faster
+---------------------------------------------------------------------------------------------------
+Version: 0.2.0
+Date: 2022-04-09
+  Bugfixes:
+    - Allow using yellow and red belts to create IO ports
+  Optimizations:
+    - Make module placement 10x faster with new floodfill algorithm
+---------------------------------------------------------------------------------------------------
+Version: 0.1.5
+Date: 2022-04-08
+  Bugfixes:
+    - Fix issue copying modules in /editor
+---------------------------------------------------------------------------------------------------
+Version: 0.1.4
+Date: 2022-04-08
+  Bugfixes:
+    - Fixed crash when placing belt facing in the direction of a wall (https://github.com/Danielv123/factory_modules/issues/6)
+---------------------------------------------------------------------------------------------------
+Version: 0.1.3
+Date: 2022-04-08
+  Bugfixes:
+    - Fixed loosing your character if you were standing below an IO port being created
+---------------------------------------------------------------------------------------------------
+Version: 0.1.2
+Date: 2022-04-08
+  Features:
+    - Create a power pole over the power connection of a unit (https://github.com/Danielv123/factory_modules/issues/3)
+---------------------------------------------------------------------------------------------------
+Version: 0.1.1
+Date: 2022-04-08
+  Bugfixes:
+    - Crash when clicking in the GUI
+  Features:
+    - Added minimap to the GUI to show module location
+---------------------------------------------------------------------------------------------------
+Version: 0.1.0
+Date: 2022-04-04
+  Features:
+    - Added GUI framework
+---------------------------------------------------------------------------------------------------
+Version: 0.0.1 - Initial release
+Date: 2022-03-26
+  Features:
+    - Basic module creation and visualization
