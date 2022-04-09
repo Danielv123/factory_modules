@@ -79,7 +79,7 @@ local floodfill = function (entity)
                         unit_number = neighbor.unit_number,
                         entity = neighbor,
                     })
-                    mark_entity_temporarily(neighbor, 60)
+                    -- mark_entity_temporarily(neighbor, 60)
                 end
             end
         end
