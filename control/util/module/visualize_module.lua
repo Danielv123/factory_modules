@@ -57,5 +57,19 @@ return function (module)
         text_offset = text_offset + 0.5
     end
 
+    -- Say if there are players in the module, affects some behaviour
+    if module.is_player_nearby == true then
+        table.insert(visualization, rendering.draw_text({
+            text = "Player nearby, performance might be impacted to improve simulation",
+            color = {r = 1, g = 1, b = 1, a = 1},
+            surface = module.surface,
+            target = {
+                x = module.bounding_box.min_x + 1,
+                y = module.bounding_box.min_y + text_offset
+            }
+        }))
+        text_offset = text_offset + 0.5
+    end
+
     module.visualization = visualization
 end

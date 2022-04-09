@@ -12,7 +12,8 @@ return {
         "express-transport-belt",
     },
     MODULE_UPDATE_INTERVAL = 32, -- How often modules are updated
-    MODULE_ACTIVE_CHECK_INTERVAL = 256, -- How often modules are checked for validity
+    MODULE_ACTIVE_CHECK_INTERVAL = 2048, -- How often modules are checked for validity
+    MODULE_ACTIVE_CHECK_INTERVAL_PLAYER_NEARBY = 256, -- How often modules are checked for validity when players are nearby (inside the module)
     MODULE_POWER_UPDATE_INTERVAL = 32, -- How often modules are checked for power consumption
     NOT_ALLOWED_IN_MODULE = {
         "roboport",
