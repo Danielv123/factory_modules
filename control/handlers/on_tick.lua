@@ -6,6 +6,7 @@ local check_module_active = require "control.util.module.secondary.check_module_
 local update_power_consumption = require "control.util.module.primary.update_power_consumption"
 local update_power_usage       = require "control.util.module.secondary.update_power_usage"
 local draw_secondary_module_details = require "control.user_interface.gui.draw_secondary_module_details"
+local remove_temporary_visualization_on_tick = require "control.util.visualize.remove_temporary_visualization_on_tick"
 
 --[[
     on_tick.lua
@@ -201,4 +202,7 @@ return function (event)
             draw_secondary_module_details.draw(player, global.factory_modules.players[player.name].selected_module_reference)
         end
     end
+
+    -- Remove temporary visualizations
+    remove_temporary_visualization_on_tick()
 end

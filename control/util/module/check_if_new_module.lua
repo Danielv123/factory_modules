@@ -3,6 +3,7 @@ local filter_table = require "control.util.filter_table"
 local get_primary_module = require "control.util.module.get_primary"
 local visualize_module = require "control.util.module.visualize_module"
 local update_entity_status = require "control.util.module.update_entity_status"
+local floodfill            = require "control.util.floodfill.floodfill"
 
 local find_adjacent = function(entity)
     local entities = entity.surface.find_entities_filtered{
@@ -232,14 +233,16 @@ end
 
 -- Check if the walls are arranged in a rectangle
 local check_if_new_module = function(entity)
-    local entities = {{
+    --[[local entities = {{
         checked = false,
         entity = entity
-    }}
+    }}]]
 
     local surface = entity.surface
     local force = entity.force
+    local entities = floodfill(entity)
 
+    --[[
     -- Find adjacent entities
     local number_unchecked = 1
     while number_unchecked > 0 do
@@ -276,6 +279,7 @@ local check_if_new_module = function(entity)
     for _,v in pairs(entities) do
         v.position = v.entity.position
     end
+    ]]
 
     local max_x = nil
     local max_y = nil
