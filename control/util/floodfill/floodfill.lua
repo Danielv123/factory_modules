@@ -71,15 +71,15 @@ local floodfill = function (entity)
         local neighbors = GetNeighbors(surface, current.position)
         for _, neighbor in pairs(neighbors) do
             if neighbor.unit_number ~= current.unit_number then
-                if not unit_numbers[neighbor.unit_number]
-                and neighbor.type ~= "transport-belt" then
+                if not unit_numbers[neighbor.unit_number] then
+                -- and neighbor.type ~= "transport-belt" 
                     unit_numbers[neighbor.unit_number] = true
                     table.insert(queue, {
                         position = neighbor.position,
                         unit_number = neighbor.unit_number,
                         entity = neighbor,
                     })
-                    -- mark_entity_temporarily(neighbor, 60)
+                    mark_entity_temporarily(neighbor, 60)
                 end
             end
         end
