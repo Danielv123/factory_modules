@@ -7,12 +7,17 @@ local function render_module(parent, module, index, player)
         type = "frame",
         name = "module_group_"..index,
         direction = "horizontal",
+        tags = {
+            x = module.position.x,
+            y = module.position.y,
+            surface = module.surface.name,
+        }
     })
     module_frame.style.vertical_align = "center"
     module_frame.style.width = 320
     local left = module_frame.add({
         type = "flow",
-        name = "module_group_left"..index,
+        name = "module_group_left",
         direction = "horizontal",
     })
     left.style.width = 100
@@ -25,7 +30,7 @@ local function render_module(parent, module, index, player)
     })
     local right = module_frame.add({
         type = "flow",
-        name = "module_group_right"..index,
+        name = "module_group_right",
         direction = "vertical",
     })
     right.style.minimal_width = 120
@@ -38,7 +43,7 @@ local function render_module(parent, module, index, player)
     })
     local buttons = module_frame.add({
         type = "flow",
-        name = "module_group_buttons"..index,
+        name = "module_group_buttons",
         direction = "horizontal",
     })
     buttons.add({
@@ -96,7 +101,8 @@ local function show_module_list(player, module_id)
             type = "sprite-button",
             name = "module_list_close_btn",
             direction = "vertical",
-            sprite = "utility/close_fat",
+            sprite = "utility/close_white",
+            style = "close_button"
         })
 
         local split_layout = module_list.add({
@@ -158,7 +164,8 @@ local function show_module_list(player, module_id)
                 type = "sprite-button",
                 name = "module_list_info_close_btn",
                 direction = "vertical",
-                sprite = "utility/close_fat",
+                sprite = "utility/close_white",
+                style = "close_button"
             })
             -- Draw module info content
             local module_info_content = module_info.add({

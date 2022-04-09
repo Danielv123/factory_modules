@@ -22,9 +22,9 @@ local draw = function (player, reference)
     })
     header.add({
         type = "sprite-button",
-        name = "secondary_module_group_expand_btn",
-        direction = "vertical",
-        sprite = "utility/close_fat",
+        name = "secondary_module_group_close_btn",
+        sprite = "utility/close_white",
+        style = "close_button"
     })
     container.add({
         type = "label",

@@ -143,7 +143,6 @@ return function (module, index)
         end
     end
     if is_player_nearby ~= module.is_player_nearby then
-        game.print("Is player nearby" .. tostring(is_player_nearby))
         module.is_player_nearby = is_player_nearby
         visualize_module(module)
     end
