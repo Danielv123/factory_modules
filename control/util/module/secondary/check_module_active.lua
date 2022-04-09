@@ -45,43 +45,70 @@ end
 
 local check_contains_ghosts = function (module, index)
     if module.entities_inside_module == nil then return end
+    if module.contains_ghosts_set == nil then
+        module.contains_ghosts_set = {}
+    end
     -- Check if there are ghosts
-    for _, entity in ipairs(module.entities_inside_module) do
+    for i = index + 1, #module.entities_inside_module, constants.MODULE_ACTIVE_CHECK_INTERVAL do
+        local entity = module.entities_inside_module[i]
         if entity.valid and entity.name == "entity-ghost" then
-            module.contains_ghosts = true
+            module.contains_ghosts_set[index] = true
             return false
         end
     end
+    module.contains_ghosts_set[index] = false
 end
 
 local check_marked_for_deconstruction = function (module, index)
     if module.entities_inside_module == nil then return end
+    if module.marked_for_deconstruction_set == nil then
+        module.marked_for_deconstruction_set = {}
+    end
     -- Check if marked for deconstruction
-    for _, entity in ipairs(module.entities_inside_module) do
+    for i = index + 1, #module.entities_inside_module, constants.MODULE_ACTIVE_CHECK_INTERVAL do
+        local entity = module.entities_inside_module[i]
         if entity.valid and entity.to_be_deconstructed() then
-            module.marked_for_deconstruction = true
+            module.marked_for_deconstruction_set[index] = true
             return false
         end
     end
-    module.marked_for_deconstruction = false
+    module.marked_for_deconstruction_set[index] = false
 end
 
 local check_entities_powered = function (module, index)
     if module.entities_inside_module == nil then return end
+    if module.contains_unpowered_entities_set == nil then
+        module.contains_unpowered_entities_set = {}
+    end
     -- Check if all powered entities are powered
-    for _, entity in ipairs(module.entities_inside_module) do
+    for i = index + 1, #module.entities_inside_module, constants.MODULE_ACTIVE_CHECK_INTERVAL do
+        local entity = module.entities_inside_module[i]
         if entity.valid and not is_entity_powered(entity) then
-            module.contains_unpowered_entities = true
+            module.contains_unpowered_entities_set[index] = true
             return false
         end
     end
-    module.contains_unpowered_entities = false
+    module.contains_unpowered_entities_set[index] = false
 end
 
 local is_module_active = function (module)
-    if module.contains_ghosts == false then return false end
-    if module.marked_for_deconstruction == false then return false end
-    if module.contains_unpowered_entities == false then return false end
+    module.contains_ghosts = false
+    module.marked_for_deconstruction = false
+    module.contains_unpowered_entities = false
+    for i = 1, constants.MODULE_ACTIVE_CHECK_INTERVAL do
+        if module.contains_ghosts_set and module.contains_ghosts_set[i] == true then
+            module.contains_ghosts = true
+        end
+        if module.marked_for_deconstruction_set and module.marked_for_deconstruction_set[i] == true then
+            module.marked_for_deconstruction = true
+        end
+        if module.contains_unpowered_entities_set and module.contains_unpowered_entities_set[i] == true then
+            module.contains_unpowered_entities = true
+        end
+    end
+    if module.contains_ghosts == true then return false end
+    if module.marked_for_deconstruction == true then return false end
+    if module.contains_unpowered_entities == true then return false end
     return true
 end
 
@@ -98,22 +125,23 @@ local spread_over_multiple_ticks = function (index, offset, module, fn)
     end
 
     local tick_index = (game.tick + index + offset) % constants.MODULE_ACTIVE_CHECK_INTERVAL
-    if tick_index == 0 then
-        fn(module, tick_index)
-    end
+    fn(module, tick_index)
 end
 
 return function (module, index)
-    spread_over_multiple_ticks(index * 17, 0, module, get_entities_inside_module)
+    if (game.tick + index * 17 + 0) % constants.MODULE_ACTIVE_CHECK_INTERVAL == 0 then
+        get_entities_inside_module(module, index)
+    end
     spread_over_multiple_ticks(index * 17, 1, module, check_contains_ghosts)
     spread_over_multiple_ticks(index * 17, 2, module, check_marked_for_deconstruction)
     spread_over_multiple_ticks(index * 17, 3, module, check_entities_powered)
 
-    local status = is_module_active(module)
-
-    -- If status has changed, update module visualization
-    if module.active ~= status then
-        module.active = status
-        visualize_module(module)
+    if (game.tick + index) % constants.MODULE_ACTIVE_CHECK_INTERVAL == 0 then
+        local status = is_module_active(module)
+        -- If status has changed, update module visualization
+        if module.active ~= status then
+            module.active = status
+            visualize_module(module)
+        end
     end
 end

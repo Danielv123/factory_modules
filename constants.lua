@@ -12,7 +12,7 @@ return {
         "express-transport-belt",
     },
     MODULE_UPDATE_INTERVAL = 32, -- How often modules are updated
-    MODULE_ACTIVE_CHECK_INTERVAL = 32, -- How often modules are checked for validity
+    MODULE_ACTIVE_CHECK_INTERVAL = 256, -- How often modules are checked for validity
     MODULE_POWER_UPDATE_INTERVAL = 32, -- How often modules are checked for power consumption
     NOT_ALLOWED_IN_MODULE = {
         "roboport",
