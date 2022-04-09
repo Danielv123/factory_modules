@@ -148,7 +148,7 @@ return function (event)
     end
 
     -- Update secondary modules
-    for _, module in pairs(
+    for index, module in pairs(
         filter_table(
             global.factory_modules.modules,
             function (module)
@@ -163,9 +163,8 @@ return function (event)
             update_secondary_module(module, secondary_module_operations_target[module.module_id])
         end
         -- Update active status periodically
-        if event.tick % constants.MODULE_ACTIVE_CHECK_INTERVAL == (module.module_id + 10) % constants.MODULE_ACTIVE_CHECK_INTERVAL then
-            check_module_active(module)
-        end
+        check_module_active(module, index)
+
         -- Update power consumption perioidically
         if event.tick % constants.MODULE_POWER_UPDATE_INTERVAL == module.module_id % constants.MODULE_POWER_UPDATE_INTERVAL then
             update_power_usage(module)
