@@ -8,9 +8,12 @@ local visualize_module = require "control.util.module.visualize_module"
 ]]
 
 return function (module, entity)
+    module.last_tick_with_changes = game.tick
     for _, mod in pairs(global.factory_modules.modules) do
         -- Mirror construction inside modules
         if mod.module_id == module.module_id and mod ~= module then
+            -- Mark module as changed
+            mod.last_tick_with_changes = game.tick
             -- Calculate position relative to the module
             local relative_position = {
                 x = entity.position.x - module.position.x + mod.position.x,

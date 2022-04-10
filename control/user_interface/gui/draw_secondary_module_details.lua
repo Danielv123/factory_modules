@@ -1,3 +1,4 @@
+local constants = require "constants"
 local draw = function (player, reference)
     if reference == nil then return end
     local split_layout = player.gui.screen.module_list.module_list_split_layout
@@ -89,6 +90,20 @@ local draw = function (player, reference)
     if reference.module.contains_unpowered_entities then
         label.style.font_color = {r = 1, g = 0, b = 0}
         value.style.font_color = {r = 1, g = 0, b = 0}
+    end
+    label = secondary_module_info.add({
+        type = "label",
+        name = "secondary_module_info_do_detailed_update",
+        caption = "Do detailed update: ",
+    })
+    value = secondary_module_info.add({
+        type = "label",
+        name = "secondary_module_info_do_detailed_update_value",
+        caption = string.upper(tostring(reference.module.last_tick_with_changes + constants.MODULE_ACTIVE_CHECK_INTERVAL * 2 >= game.tick)) or "false",
+    })
+    if reference.module.last_tick_with_changes + constants.MODULE_ACTIVE_CHECK_INTERVAL * 2 >= game.tick then
+        label.style.font_color = {r = 0, g = 1, b = 0}
+        value.style.font_color = {r = 0, g = 1, b = 0}
     end
 
     -- Draw minimap

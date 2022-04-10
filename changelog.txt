@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.3.2
+Date: 2022-04-10
+  Bugfixes:
+    - Check if player and module are on the same surface
+  Optimizations:
+    - Only do a detailed validity check of secondary module if there have been made changes to it, 
+      2x - 4x speedup of script runtime
+---------------------------------------------------------------------------------------------------
 Version: 0.3.1
 Date: 2022-04-10
   Bugfixes:

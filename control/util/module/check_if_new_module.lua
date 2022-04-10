@@ -506,6 +506,7 @@ local check_if_new_module = function(entity)
             visualization = {},
             force = force,
             has_sufficient_power = false,
+            last_tick_with_changes = game.tick,
         }
         visualize_module(module)
         update_entity_status(module)

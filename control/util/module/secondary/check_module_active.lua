@@ -129,16 +129,27 @@ local spread_over_multiple_ticks = function (index, offset, module, fn, module_c
 end
 
 return function (module, index)
+    local do_detailed_check = true
+    if module.last_tick_with_changes == nil then module.last_tick_with_changes = game.tick end
+    if module.last_tick_with_changes + constants.MODULE_ACTIVE_CHECK_INTERVAL * 2 < game.tick then
+        -- No changes has been made to the module in the last MODULE_ACTIVE_CHECK_INTERVAL ticks, so we can
+        -- assume that the state has not changed.
+        do_detailed_check = false
+    end
     -- Check if player is close to the module
     local is_player_nearby = false
-    for _, player in pairs(game.players) do
-        if player.connected then
-            local position = player.position
-            local module_borders = module.bounding_box
-            if position.x <= module_borders.max_x and position.x >= module_borders.min_x and
-                position.y <= module_borders.max_y and position.y >= module_borders.min_y then
-                is_player_nearby = true
-                break
+    if do_detailed_check then
+        for _, player in pairs(game.players) do
+            if player.connected then
+                local position = player.position
+                local module_borders = module.bounding_box
+                if player.surface == module.surface
+                and position.x <= module_borders.max_x and position.x >= module_borders.min_x
+                and position.y <= module_borders.max_y and position.y >= module_borders.min_y
+                then
+                    is_player_nearby = true
+                    break
+                end
             end
         end
     end
@@ -150,12 +161,14 @@ return function (module, index)
     if module.is_player_nearby then
         module_check_interval = constants.MODULE_ACTIVE_CHECK_INTERVAL_PLAYER_NEARBY
     end
-    if (game.tick + index * 17 + 0) % module_check_interval == 0 then
-        get_entities_inside_module(module, index)
+    if do_detailed_check then
+        if (game.tick + index * 17 + 0) % module_check_interval == 0 then
+            get_entities_inside_module(module, index)
+        end
+        spread_over_multiple_ticks(index * 17, 1, module, check_contains_ghosts, module_check_interval)
+        spread_over_multiple_ticks(index * 17, 2, module, check_marked_for_deconstruction, module_check_interval)
+        spread_over_multiple_ticks(index * 17, 3, module, check_entities_powered, module_check_interval)
     end
-    spread_over_multiple_ticks(index * 17, 1, module, check_contains_ghosts, module_check_interval)
-    spread_over_multiple_ticks(index * 17, 2, module, check_marked_for_deconstruction, module_check_interval)
-    spread_over_multiple_ticks(index * 17, 3, module, check_entities_powered, module_check_interval)
 
     if (game.tick + index) % module_check_interval == 0 then
         local status = is_module_active(module)
