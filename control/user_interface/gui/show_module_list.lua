@@ -1,3 +1,4 @@
+local filter_table = require "control.util.filter_table"
 --[[
     Show a list of all active modules and information about them.
 ]]
@@ -123,10 +124,11 @@ local function show_module_list(player, module_id)
             if not modules[module.module_id] then
                 modules[module.module_id] = {
                     module_id = module.module_id,
-                    module_count = 1,
+                    module_count = 0,
                     modules = {},
                 }
             end
+            modules[module.module_id].module_count = modules[module.module_id].module_count + 1
             table.insert(modules[module.module_id].modules, module)
         end
 

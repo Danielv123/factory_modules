@@ -202,7 +202,4 @@ return function (event)
             draw_secondary_module_details.draw(player, global.factory_modules.players[player.name].selected_module_reference)
         end
     end
-
-    -- Remove temporary visualizations
-    remove_temporary_visualization_on_tick()
 end
