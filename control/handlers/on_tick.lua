@@ -128,46 +128,36 @@ return function (event)
     local secondary_module_operations_target = {}
 
     -- Update primary modules
-    for _, module in pairs(
-        filter_table(
-            global.factory_modules.modules,
-            function (module)
-                return module.primary
+    for _, module in pairs(global.factory_modules.modules) do
+        if module.primary then
+            if event.tick % constants.MODULE_UPDATE_INTERVAL == module.module_id % constants.MODULE_UPDATE_INTERVAL then
+                local io_operations = update_primary_module(module)
+                secondary_module_operations_target[module.module_id] = io_operations
             end
-        )
-    ) do
-        if event.tick % constants.MODULE_UPDATE_INTERVAL == module.module_id % constants.MODULE_UPDATE_INTERVAL then
-            local io_operations = update_primary_module(module)
-            secondary_module_operations_target[module.module_id] = io_operations
-        end
-        -- Update power consumption perioidically
-        if event.tick % constants.MODULE_POWER_UPDATE_INTERVAL == module.module_id % constants.MODULE_POWER_UPDATE_INTERVAL
-        and not module.power_consumption_is_up_to_date then
-            update_power_consumption(module)
+            -- Update power consumption perioidically
+            if event.tick % constants.MODULE_POWER_UPDATE_INTERVAL == module.module_id % constants.MODULE_POWER_UPDATE_INTERVAL
+            and not module.power_consumption_is_up_to_date then
+                update_power_consumption(module)
+            end
         end
     end
 
     -- Update secondary modules
-    for index, module in pairs(
-        filter_table(
-            global.factory_modules.modules,
-            function (module)
-                return not module.primary
+    for index, module in pairs(global.factory_modules.modules) do
+        if not module.primary then
+            if event.tick % constants.MODULE_UPDATE_INTERVAL == module.module_id % constants.MODULE_UPDATE_INTERVAL
+                and secondary_module_operations_target[module.module_id] ~= nil -- Nil when there is no primary module
+                and module.active -- Module gets deactivated if there is construction in progress or no power
+            then
+                update_secondary_module(module, secondary_module_operations_target[module.module_id])
             end
-        )
-    ) do
-        if event.tick % constants.MODULE_UPDATE_INTERVAL == module.module_id % constants.MODULE_UPDATE_INTERVAL
-            and secondary_module_operations_target[module.module_id] ~= nil -- Nil when there is no primary module
-            and module.active -- Module gets deactivated if there is construction in progress or no power
-        then
-            update_secondary_module(module, secondary_module_operations_target[module.module_id])
-        end
-        -- Update active status periodically
-        check_module_active(module, index)
+            -- Update active status periodically
+            check_module_active(module, index)
 
-        -- Update power consumption perioidically
-        if event.tick % constants.MODULE_POWER_UPDATE_INTERVAL == module.module_id % constants.MODULE_POWER_UPDATE_INTERVAL then
-            update_power_usage(module)
+            -- Update power consumption perioidically
+            if event.tick % constants.MODULE_POWER_UPDATE_INTERVAL == module.module_id % constants.MODULE_POWER_UPDATE_INTERVAL then
+                update_power_usage(module)
+            end
         end
     end
 
