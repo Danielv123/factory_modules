@@ -125,14 +125,19 @@ return function (event)
     -- on_tick handler
     -- game.print(event.tick)
 
-    local secondary_module_operations_target = {}
+    if global.factory_modules.secondary_module_operations_target == nil then
+        global.factory_modules.secondary_module_operations_target = {}
+    end
 
     -- Update primary modules
     for _, module in pairs(global.factory_modules.modules) do
         if module.primary then
             if event.tick % constants.MODULE_UPDATE_INTERVAL == module.module_id % constants.MODULE_UPDATE_INTERVAL then
                 local io_operations = update_primary_module(module)
-                secondary_module_operations_target[module.module_id] = io_operations
+                global.factory_modules.secondary_module_operations_target[module.module_id] = {
+                    io_operations = io_operations,
+                    tick = game.tick,
+                }
             end
             -- Update power consumption perioidically
             if event.tick % constants.MODULE_POWER_UPDATE_INTERVAL == module.module_id % constants.MODULE_POWER_UPDATE_INTERVAL
@@ -145,11 +150,12 @@ return function (event)
     -- Update secondary modules
     for index, module in pairs(global.factory_modules.modules) do
         if not module.primary then
-            if event.tick % constants.MODULE_UPDATE_INTERVAL == module.module_id % constants.MODULE_UPDATE_INTERVAL
-                and secondary_module_operations_target[module.module_id] ~= nil -- Nil when there is no primary module
+            if (event.tick + index) % constants.MODULE_UPDATE_INTERVAL == 0
+                and global.factory_modules.secondary_module_operations_target[module.module_id] ~= nil -- Nil when there is no primary module
+             and global.factory_modules.secondary_module_operations_target[module.module_id].tick >= game.tick - constants.MODULE_UPDATE_INTERVAL
                 and module.active -- Module gets deactivated if there is construction in progress or no power
             then
-                update_secondary_module(module, secondary_module_operations_target[module.module_id])
+                update_secondary_module(module, global.factory_modules.secondary_module_operations_target[module.module_id].io_operations)
             end
             -- Update active status periodically
             check_module_active(module, index)

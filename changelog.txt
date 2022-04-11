@@ -3,6 +3,8 @@ Version: 0.3.3
 Date: 2022-04-11
   Optimizations:
     - Optimize looping over modules in on_tick for minor performance boost
+    - Fixed secondary module updates of the same primary module not being spread out over multiple
+      ticks, causing stuttering in cases where a single module was duplicated a lot of times
 ---------------------------------------------------------------------------------------------------
 Version: 0.3.2
 Date: 2022-04-10
