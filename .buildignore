@@ -2,6 +2,9 @@ node_modules/**
 dist/**
 .git/**
 docs/**
+.vscode/**
+.github/**
+.devcontainer/**
 .buildignore
 .gitignore
 readme.md
