@@ -6,5 +6,5 @@ return function (id)
             return module
         end
     end
-    return false
+    return nil
 end

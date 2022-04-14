@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.3.6
+Date: 2022-04-14
+  Bugfixes:
+    - Fix crash when secondary module updates its visualization without a primary module existing.
+---------------------------------------------------------------------------------------------------
 Version: 0.3.5
 Date: 2022-04-14
   Optimizations:
