@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.3.4
+Date: 2022-04-14
+  Optimizations:
+    - Made migrations and module placement faster by filtering out wasted loop cycles
+---------------------------------------------------------------------------------------------------
 Version: 0.3.3
 Date: 2022-04-11
   Optimizations:
