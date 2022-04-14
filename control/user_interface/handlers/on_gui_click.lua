@@ -1,11 +1,12 @@
-local show_module_list = require "control.user_interface.gui.show_module_list"
-local show_secondary_module_details = require "control.user_interface.gui.show_secondary_module_details"
-local hide_secondary_module_details = require "control.user_interface.gui.hide_secondary_module_details"
-return function (event)
-    -- game.print("on_gui_click ".. event.element.name)
+local GUI = require "control.user_interface.gui.gui"
+local module_list_on_gui_click = require "control.user_interface.gui.module_list.on_gui_click"
+local module_info_on_gui_click = require "control.user_interface.gui.module_list.module_info.on_gui_click"
+local module_panel_on_gui_click = require "control.user_interface.gui.module_list.module_info.module_panel.on_gui_click"
+
+return function(event)
     if event.element.name == "module_list_btn" then
         local player = game.players[event.player_index]
-        show_module_list(player)
+        GUI.draw_module_list(player)
         return
     end
     if event.element.name == "module_list_close_btn" then
@@ -13,16 +14,16 @@ return function (event)
         player.gui.screen.module_list.destroy()
         return
     end
-    if event.element.name == "module_list_info_close_btn" then
-        local player = game.players[event.player_index]
-        player.gui.screen.module_list.module_list_split_layout.module_list_info.destroy()
-        return
-    end
-    if event.element.name == "secondary_module_group_close_btn" then
-        local player = game.players[event.player_index]
-        hide_secondary_module_details(player, event.element)
-        return
-    end
+
+    module_list_on_gui_click(event)
+    module_info_on_gui_click(event)
+    module_panel_on_gui_click(event)
+end
+
+--[[
+    return function (event)
+    -- game.print("on_gui_click ".. event.element.name)
+
     for _, module in pairs(global.factory_modules.modules) do
         if event.element.name == "module_group_"..module.module_id then
             local player = game.players[event.player_index]
@@ -46,3 +47,4 @@ return function (event)
         })
     end
 end
+]]
