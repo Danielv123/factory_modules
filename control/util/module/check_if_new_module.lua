@@ -395,7 +395,7 @@ local check_if_new_module = function(entity)
                     -- Try to find a primary module with the same ID
                     combinator = v.entity
                     local primary_module = get_primary_module(combinator.get_or_create_control_behavior().parameters[1].count)
-                    if primary_module ~= false then
+                    if primary_module ~= nil then
                         primary = false
                         combinator.get_or_create_control_behavior().set_signal(2, {
                             signal = {

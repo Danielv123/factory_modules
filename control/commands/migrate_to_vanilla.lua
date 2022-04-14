@@ -108,4 +108,5 @@ return function (event)
             end
         end
     end
+    global.factory_modules.modules = {}
 end
