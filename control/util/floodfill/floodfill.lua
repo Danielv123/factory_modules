@@ -4,64 +4,69 @@ local filter_table            = require "control.util.filter_table"
 
 local GetNeighbors = function (surface, position, entity)
     local entities = {}
-    for _, entity in pairs(surface.find_entities_filtered({
-            radius = 0,
-            position = {
-                x = position.x - 1,
-                y = position.y
-            },
-            name = constants.WALL_PIECES,
-        }))
-    do
-        table.insert(entities, entity)
-    end
-    for _, entity in pairs(surface.find_entities_filtered({
-            radius = 0,
-            position = {
-                x = position.x + 1,
-                y = position.y
-            },
-            name = constants.WALL_PIECES,
-        }))
-    do
-        table.insert(entities, entity)
-    end
-    for _, entity in pairs(surface.find_entities_filtered({
-            radius = 0,
-            position = {
-                x = position.x,
-                y = position.y - 1
-            },
-            name = constants.WALL_PIECES,
-        }))
-    do
-        table.insert(entities, entity)
-    end
-    for _, entity in pairs(surface.find_entities_filtered({
-            radius = 0,
-            position = {
-                x = position.x,
-                y = position.y + 1
-            },
-            name = constants.WALL_PIECES,
-        }))
-    do
-        table.insert(entities, entity)
-    end
+    local get_x = true
+    local get_y = true
 
     -- Filter out entities in the direction the belt is facing
     if entity.type == "transport-belt" then
-        entities = filter_table(entities, function (found_entity)
-            if entity.direction == defines.direction.north then
-                return found_entity.position.y == position.y
-            elseif entity.direction == defines.direction.east then
-                return found_entity.position.x == position.x
-            elseif entity.direction == defines.direction.south then
-                return found_entity.position.y == position.y
-            elseif entity.direction == defines.direction.west then
-                return found_entity.position.x == position.x
-            end
-        end)
+        if entity.direction == defines.direction.north then
+            get_y = false
+        elseif entity.direction == defines.direction.east then
+            get_x = false
+        elseif entity.direction == defines.direction.south then
+            get_y = false
+        elseif entity.direction == defines.direction.west then
+            get_x = false
+        end
+    end
+
+    if get_x then
+        for _, entity in pairs(surface.find_entities_filtered({
+                radius = 0,
+                position = {
+                    x = position.x - 1,
+                    y = position.y
+                },
+                name = constants.WALL_PIECES,
+            }))
+        do
+            table.insert(entities, entity)
+        end
+        for _, entity in pairs(surface.find_entities_filtered({
+                radius = 0,
+                position = {
+                    x = position.x + 1,
+                    y = position.y
+                },
+                name = constants.WALL_PIECES,
+            }))
+        do
+            table.insert(entities, entity)
+        end
+    end
+    if get_y then
+        for _, entity in pairs(surface.find_entities_filtered({
+                radius = 0,
+                position = {
+                    x = position.x,
+                    y = position.y - 1
+                },
+                name = constants.WALL_PIECES,
+            }))
+        do
+            table.insert(entities, entity)
+        end
+        for _, entity in pairs(surface.find_entities_filtered({
+                radius = 0,
+                position = {
+                    x = position.x,
+                    y = position.y + 1
+                },
+                name = constants.WALL_PIECES,
+            }))
+        do
+            table.insert(entities, entity)
+        end
     end
 
     return entities

@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.3.5
+Date: 2022-04-14
+  Optimizations:
+    - Optimized floodfill branching when placing belts, improving performance of large and small
+      blueprints.
+---------------------------------------------------------------------------------------------------
 Version: 0.3.4
 Date: 2022-04-14
   Optimizations:
