@@ -14,7 +14,20 @@ return function (module)
                 y = module.bounding_box.max_y - 1
             }
         },
-        type = {"combat-robot", "construction-robot", "logistic-robot", "spider-vehicle", "car", "character"},
+        type = {
+            "combat-robot",
+            "construction-robot",
+            "logistic-robot",
+            "spider-vehicle",
+            "car",
+            "character",
+            "transport-belt",
+            "wall",
+            "underground-belt",
+            "resource",
+            "tree",
+            "simple-entity"
+        },
         invert = true,
     })
     for _, entity in pairs(entities) do

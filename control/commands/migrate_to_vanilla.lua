@@ -6,6 +6,7 @@ return function (event)
     game.print("Migrating factory modules to vanilla")
     for _, module in pairs(global.factory_modules.modules) do
         -- Remove io ports and replace with belts
+        local raise_destroy = true -- Only raise destroy once
         for _, port in pairs(module.ports) do
             local position = port.external_chest.position
 
@@ -14,8 +15,9 @@ return function (event)
                 entity.destroy()
             end
             port.external_chest.destroy({
-                raise_destroy = true -- Allow the mod to cleanup module data
+                raise_destroy = raise_destroy -- Allow the mod to cleanup module data
             })
+            raise_destroy = false
 
             -- Belt positions
             local belt_positions = {}
@@ -85,6 +87,21 @@ return function (event)
                         y = module.bounding_box.max_y
                     }
                 },
+                type = {
+                    "combat-robot",
+                    "construction-robot",
+                    "logistic-robot",
+                    "spider-vehicle",
+                    "car",
+                    "character",
+                    "transport-belt",
+                    "wall",
+                    "underground-belt",
+                    "resource",
+                    "tree",
+                    "simple-entity"
+                },
+                invert = true
             })
             for _, entity in pairs(entities) do
                 entity.active = true
