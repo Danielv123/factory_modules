@@ -4,6 +4,8 @@ Date: 2022-04-14
   Optimizations:
     - Optimized floodfill branching when placing belts, improving performance of large and small
       blueprints.
+    - Optimized secondary module operations IO update performance by using entities stored in 
+      global instead of find_entities_filtered
 ---------------------------------------------------------------------------------------------------
 Version: 0.3.4
 Date: 2022-04-14

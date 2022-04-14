@@ -71,5 +71,33 @@ return function (module)
         text_offset = text_offset + 0.5
     end
 
+    -- Did inefficient IO update
+    if module.warning_inefficient_io_lookup == true then
+        table.insert(visualization, rendering.draw_text({
+            text = "Inefficient IO update, check IO ports or try /migrate_to_vanilla and /migrate_from_vanilla",
+            color = {r = 1, g = 1, b = 0, a = 1},
+            surface = module.surface,
+            target = {
+                x = module.bounding_box.min_x + 1,
+                y = module.bounding_box.min_y + text_offset
+            }
+        }))
+        text_offset = text_offset + 0.5
+    end
+
+    -- IO opereations mismatch
+    if module.error_io_operations_mismatch == true then
+        table.insert(visualization, rendering.draw_text({
+            text = "IO operations mismatch, check IO ports",
+            color = {r = 1, g = 0, b = 0, a = 1},
+            surface = module.surface,
+            target = {
+                x = module.bounding_box.min_x + 1,
+                y = module.bounding_box.min_y + text_offset
+            }
+        }))
+        text_offset = text_offset + 0.5
+    end
+
     module.visualization = visualization
 end

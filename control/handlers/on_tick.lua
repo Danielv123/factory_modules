@@ -7,6 +7,7 @@ local update_power_consumption = require "control.util.module.primary.update_pow
 local update_power_usage       = require "control.util.module.secondary.update_power_usage"
 local draw_secondary_module_details = require "control.user_interface.gui.draw_secondary_module_details"
 local remove_temporary_visualization_on_tick = require "control.util.visualize.remove_temporary_visualization_on_tick"
+local visualize_module                       = require "control.util.module.visualize_module"
 
 --[[
     on_tick.lua
@@ -18,7 +19,7 @@ local remove_temporary_visualization_on_tick = require "control.util.visualize.r
 
 local update_primary_module = function (module)
     local io_operations = {}
-    for _, port in pairs(module.ports) do
+    for index, port in pairs(module.ports) do
         local origin
         local destination
         if port.type == "input" then
@@ -39,13 +40,14 @@ local update_primary_module = function (module)
                     local moved_count = destination_inventory.insert{name=item_name, count=item_count}
                     if moved_count > 0 then
                         origin_inventory.remove{name=item_name, count=moved_count}
-                        table.insert(io_operations, {
+                        io_operations[index] = {
                             type = port.type,
                             origin_inventory = to_relative_position(module, origin.position),
                             destination_inventory = to_relative_position(module, destination.position),
                             item_name = item_name,
                             item_count = moved_count
-                        })
+                        }
+                        break -- Only move one item type, this probably breaks sushi belts
                     end
                 end
             end
@@ -57,17 +59,61 @@ end
 
 local process_secondary_module_operations = function (module, io_operations, commit)
     local no_space = false
-    for _, operation in pairs(io_operations) do
-        local origin = module.surface.find_entities_filtered{
-            position = from_relative_position(module, operation.origin_inventory),
-            name = {"steel-chest", "wooden-chest"},
-            radius = 0.5,
-        }
-        local destination = module.surface.find_entities_filtered{
-            position = from_relative_position(module, operation.destination_inventory),
-            name = {"steel-chest", "wooden-chest"},
-            radius = 0.5,
-        }
+    if module.ports == nil or #module.ports ~= #io_operations then
+        -- Something went wrong, the number of ports and the number of operations do not match
+        if module.error_io_operations_mismatch ~= true then
+            module.error_io_operations_mismatch = true
+            visualize_module(module)
+        end
+        return false
+    end
+    if module.error_io_operations_mismatch ~= false then
+        module.error_io_operations_mismatch = false
+        visualize_module(module)
+    end
+    for index, operation in pairs(io_operations) do
+        local port = module.ports[index]
+
+        local origin_inventory_position = from_relative_position(module, operation.origin_inventory)
+        local destination_inventory_position = from_relative_position(module, operation.destination_inventory)
+
+        local origin = nil
+        local destination = nil
+
+        local did_inefficient_IO_lookup = false
+        if port.internal_chest.position.x == origin_inventory_position.x and port.internal_chest.position.y == origin_inventory_position.y then
+            origin = {port.internal_chest}
+        elseif port.external_chest.position.x == origin_inventory_position.x and port.external_chest.position.y == origin_inventory_position.y then
+            origin = {port.external_chest}
+        else
+            did_inefficient_IO_lookup = true
+            origin = module.surface.find_entities_filtered{
+                position = origin_inventory_position,
+                name = {"steel-chest", "wooden-chest"},
+                radius = 0.5,
+            }
+        end
+        if port.internal_chest.position.x == destination_inventory_position.x and port.internal_chest.position.y == destination_inventory_position.y then
+            destination = {port.internal_chest}
+        elseif port.external_chest.position.x == destination_inventory_position.x and port.external_chest.position.y == destination_inventory_position.y then
+            destination = {port.external_chest}
+        else
+            did_inefficient_IO_lookup = true
+            destination = module.surface.find_entities_filtered{
+                position = destination_inventory_position,
+                name = {"steel-chest", "wooden-chest"},
+                radius = 0.5,
+            }
+        end
+
+        if module.warning_inefficient_io_lookup ~= true then
+            module.warning_inefficient_io_lookup = true
+            visualize_module(module)
+        elseif not did_inefficient_IO_lookup and module.warning_inefficient_io_lookup == true then
+            module.warning_inefficient_io_lookup = false
+            visualize_module(module)
+        end
+
         if origin and origin[1] and origin[1].valid and destination and destination[1] and destination[1].valid then
             local origin_inventory = origin[1].get_inventory(defines.inventory.chest)
             local destination_inventory = destination[1].get_inventory(defines.inventory.chest)

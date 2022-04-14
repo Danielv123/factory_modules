@@ -233,53 +233,11 @@ end
 
 -- Check if the walls are arranged in a rectangle
 local check_if_new_module = function(entity)
-    --[[local entities = {{
-        checked = false,
-        entity = entity
-    }}]]
-
     local surface = entity.surface
     local force = entity.force
+
+    -- Find entire wall
     local entities = floodfill(entity)
-
-    --[[
-    -- Find adjacent entities
-    local number_unchecked = 1
-    while number_unchecked > 0 do
-        for _,i in pairs(entities) do
-            if not i.checked then
-                local adjacent_entities = find_adjacent(i.entity)
-
-                for _,j in pairs(adjacent_entities) do
-                    -- Check if the entity is already in the list
-                    local found = false
-                    for _,k in pairs(entities) do
-                        if k.entity == j then
-                            found = true
-                            break
-                        end
-                    end
-                    -- If not, add it
-                    if not found then
-                        table.insert(entities, {
-                            checked = false,
-                            entity = j
-                        })
-                        number_unchecked = number_unchecked + 1
-                    end
-                end
-                -- Mark the entity as checked
-                i.checked = true
-                number_unchecked = number_unchecked - 1
-            end
-        end
-    end
-
-    -- Check if the entities is a rectangle
-    for _,v in pairs(entities) do
-        v.position = v.entity.position
-    end
-    ]]
 
     local max_x = nil
     local max_y = nil
@@ -416,6 +374,14 @@ local check_if_new_module = function(entity)
                 table.insert(ports, create_io("input", v.entity, direction))
             end
         end
+
+        table.sort(ports, function(a, b)
+            if a.external_chest.position.x == b.external_chest.position.x then
+                return a.external_chest.position.y < b.external_chest.position.y
+            else
+                return a.external_chest.position.x < b.external_chest.position.x
+            end
+        end)
 
         -- Create corner combinator to hold module information
         local primary
