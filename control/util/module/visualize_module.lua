@@ -8,8 +8,11 @@ return function (module)
     end
     -- Visualize module
     local border_color = {r = 0, g = 1, b = 0, a = 0.5}
-    if not module.primary then border_color = {r = 0, g = 0, b = 1, a = 0.5} end
-    if not module.active then border_color = {r = 1, g = 0, b = 0, a = 0.5} end
+    if not module.primary then
+        border_color = {r = 0, g = 0, b = 1, a = 0.5}
+        if module.do_detailed_check then border_color = {r = 1, g = 1, b = 0, a = 0.5} end
+        if not module.active then border_color = {r = 1, g = 0, b = 0, a = 0.5} end
+    end
 
     local visualization = {
         rendering.draw_rectangle({
@@ -61,7 +64,7 @@ return function (module)
     if module.is_player_nearby == true then
         table.insert(visualization, rendering.draw_text({
             text = "Player nearby, performance might be impacted to improve simulation",
-            color = {r = 1, g = 1, b = 1, a = 1},
+            color = {r = 1, g = 1, b = 0, a = 1},
             surface = module.surface,
             target = {
                 x = module.bounding_box.min_x + 1,
@@ -90,6 +93,20 @@ return function (module)
         table.insert(visualization, rendering.draw_text({
             text = "IO operations mismatch, check IO ports",
             color = {r = 1, g = 0, b = 0, a = 1},
+            surface = module.surface,
+            target = {
+                x = module.bounding_box.min_x + 1,
+                y = module.bounding_box.min_y + text_offset
+            }
+        }))
+        text_offset = text_offset + 0.5
+    end
+
+    -- Detailed module check
+    if module.do_detailed_check == true then
+        table.insert(visualization, rendering.draw_text({
+            text = "Running slower detailed module check",
+            color = {r = 1, g = 1, b = 0, a = 1},
             surface = module.surface,
             target = {
                 x = module.bounding_box.min_x + 1,

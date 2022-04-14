@@ -198,7 +198,7 @@ return function (event)
         if not module.primary then
             if (event.tick + index) % constants.MODULE_UPDATE_INTERVAL == 0
                 and global.factory_modules.secondary_module_operations_target[module.module_id] ~= nil -- Nil when there is no primary module
-             and global.factory_modules.secondary_module_operations_target[module.module_id].tick >= game.tick - constants.MODULE_UPDATE_INTERVAL
+                and global.factory_modules.secondary_module_operations_target[module.module_id].tick >= game.tick - constants.MODULE_UPDATE_INTERVAL
                 and module.active -- Module gets deactivated if there is construction in progress or no power
             then
                 update_secondary_module(module, global.factory_modules.secondary_module_operations_target[module.module_id].io_operations)

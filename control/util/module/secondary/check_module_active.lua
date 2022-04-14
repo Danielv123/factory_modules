@@ -136,6 +136,12 @@ return function (module, index)
         -- assume that the state has not changed.
         do_detailed_check = false
     end
+
+    if module.do_detailed_check ~= do_detailed_check then
+        module.do_detailed_check = do_detailed_check
+        visualize_module(module)
+    end
+
     -- Check if player is close to the module
     local is_player_nearby = false
     if do_detailed_check then

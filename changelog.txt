@@ -6,6 +6,8 @@ Date: 2022-04-14
       blueprints.
     - Optimized secondary module operations IO update performance by using entities stored in 
       global instead of find_entities_filtered
+    - Visualize when running detailed module check implemented in 0.3.2, yellow border means
+      module is running slower than optimal.
 ---------------------------------------------------------------------------------------------------
 Version: 0.3.4
 Date: 2022-04-14
