@@ -71,6 +71,7 @@ local process_secondary_module_operations = function (module, io_operations, com
         module.error_io_operations_mismatch = false
         visualize_module(module)
     end
+    local did_inefficient_IO_lookup = false
     for index, operation in pairs(io_operations) do
         local port = module.ports[index]
 
@@ -80,7 +81,6 @@ local process_secondary_module_operations = function (module, io_operations, com
         local origin = nil
         local destination = nil
 
-        local did_inefficient_IO_lookup = false
         if port.internal_chest.position.x == origin_inventory_position.x and port.internal_chest.position.y == origin_inventory_position.y then
             origin = {port.internal_chest}
         elseif port.external_chest.position.x == origin_inventory_position.x and port.external_chest.position.y == origin_inventory_position.y then
@@ -104,14 +104,6 @@ local process_secondary_module_operations = function (module, io_operations, com
                 name = {"steel-chest", "wooden-chest"},
                 radius = 0.5,
             }
-        end
-
-        if module.warning_inefficient_io_lookup ~= true then
-            module.warning_inefficient_io_lookup = true
-            visualize_module(module)
-        elseif not did_inefficient_IO_lookup and module.warning_inefficient_io_lookup == true then
-            module.warning_inefficient_io_lookup = false
-            visualize_module(module)
         end
 
         if origin and origin[1] and origin[1].valid and destination and destination[1] and destination[1].valid then
@@ -153,6 +145,14 @@ local process_secondary_module_operations = function (module, io_operations, com
                 end
             end
         end
+    end
+
+    if did_inefficient_IO_lookup == true and module.warning_inefficient_io_lookup ~= true then
+        module.warning_inefficient_io_lookup = true
+        visualize_module(module)
+    elseif not did_inefficient_IO_lookup and module.warning_inefficient_io_lookup == true then
+        module.warning_inefficient_io_lookup = false
+        visualize_module(module)
     end
     return no_space
 end
