@@ -3,7 +3,8 @@ local filter_table = require "control.util.filter_table"
 local get_primary_module = require "control.util.module.get_primary"
 local visualize_module = require "control.util.module.visualize_module"
 local update_entity_status = require "control.util.module.update_entity_status"
-local floodfill            = require "control.util.floodfill.floodfill"
+local floodfill = require "control.util.floodfill.floodfill"
+local get_uid = require "control.util.get_uid"
 
 local find_adjacent = function(entity)
     local entities = entity.surface.find_entities_filtered{
@@ -450,6 +451,7 @@ local check_if_new_module = function(entity)
         })
 
         local module = {
+            uid = get_uid(),
             primary = primary,
             active = true,
             combinator = combinator,

@@ -7,6 +7,7 @@ local update_power_consumption = require "control.util.module.primary.update_pow
 local update_power_usage = require "control.util.module.secondary.update_power_usage"
 local visualize_module = require "control.util.module.visualize_module"
 local GUI = require "control.user_interface.gui.gui"
+local get_uid = require "control.util.get_uid"
 
 --[[
     on_tick.lua
@@ -176,6 +177,10 @@ return function (event)
 
     -- Update primary modules
     for _, module in pairs(global.factory_modules.modules) do
+        -- Ensure all modules have an UID
+        if module.uid == nil then
+            module.uid = get_uid()
+        end
         if module.primary then
             if event.tick % constants.MODULE_UPDATE_INTERVAL == module.module_id % constants.MODULE_UPDATE_INTERVAL then
                 local io_operations = update_primary_module(module)

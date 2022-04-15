@@ -66,8 +66,11 @@ local function draw_module_list(player, module_id)
         for _, module in pairs(modules) do
             local module_list_item = module_list_scroll.add({
                 type = "button",
-                name = "module_group_" .. module.module_id,
+                name = "module_group_btn",
                 direction = "horizontal",
+                tags = {
+                    module_id = module.module_id,
+                },
                 caption = {"factory-modules.module_list_item_caption", module.module_id, module.module_count},
             })
         end
