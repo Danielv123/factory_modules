@@ -59,7 +59,9 @@ end
 
 local process_secondary_module_operations = function (module, io_operations, commit)
     local no_space = false
-    if module.ports == nil or #module.ports ~= #io_operations then
+    if module.ports == nil
+    -- or #module.ports ~= #io_operations -- Sometimes the outputs aren't saturated, which causes issues here.
+    then
         -- Something went wrong, the number of ports and the number of operations do not match
         if module.error_io_operations_mismatch ~= true then
             module.error_io_operations_mismatch = true
