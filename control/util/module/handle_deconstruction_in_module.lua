@@ -18,10 +18,14 @@ return function (module, entity)
                 x = entity.position.x - module.position.x + mod.position.x,
                 y = entity.position.y - module.position.y + mod.position.y,
             }
+            local type = entity.type
+            if type == "entity-ghost" then
+                type = entity.ghost_type
+            end
             local entities_in_mirror = entity.surface.find_entities_filtered({
                 position = relative_position,
                 radius = 0.5,
-                type = entity.type,
+                type = {"entity-ghost", type},
             })
             if entities_in_mirror then
                 for _, entity_in_mirror in pairs(entities_in_mirror) do

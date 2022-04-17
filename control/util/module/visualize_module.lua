@@ -116,5 +116,47 @@ return function (module)
         text_offset = text_offset + 0.5
     end
 
+    -- Contains unpowered entities
+    if module.contains_unpowered_entities == true then
+        table.insert(visualization, rendering.draw_text({
+            text = "Contains unpowered entities",
+            color = {r = 1, g = 0, b = 0, a = 1},
+            surface = module.surface,
+            target = {
+                x = module.bounding_box.min_x + 1,
+                y = module.bounding_box.min_y + text_offset
+            }
+        }))
+        text_offset = text_offset + 0.5
+    end
+
+    -- Marked for deconstruction
+    if module.marked_for_deconstruction == true then
+        table.insert(visualization, rendering.draw_text({
+            text = "Contains entities marked for deconstruction",
+            color = {r = 1, g = 0, b = 0, a = 1},
+            surface = module.surface,
+            target = {
+                x = module.bounding_box.min_x + 1,
+                y = module.bounding_box.min_y + text_offset
+            }
+        }))
+        text_offset = text_offset + 0.5
+    end
+
+    -- Ghosts
+    if module.contains_ghosts == true then
+        table.insert(visualization, rendering.draw_text({
+            text = "Contains unbuilt ghosts",
+            color = {r = 1, g = 0, b = 0, a = 1},
+            surface = module.surface,
+            target = {
+                x = module.bounding_box.min_x + 1,
+                y = module.bounding_box.min_y + text_offset
+            }
+        }))
+        text_offset = text_offset + 0.5
+    end
+
     module.visualization = visualization
 end

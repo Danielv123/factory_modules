@@ -1,6 +1,14 @@
 local constants = require "constants"
+local update_module_panel = require "update_module_panel"
 
 local draw_module_panel = function (player)
+    -- Draw container
+    local split_layout = player.gui.screen.module_list.module_list_split_layout
+    if split_layout.secondary_module_info_container then
+        update_module_panel(player)
+        return
+        -- split_layout.secondary_module_info_container.destroy()
+    end
 
     -- Get module to draw from player state
     if global.factory_modules.players[player.name].expanded_module_panel == nil then return end
@@ -14,11 +22,7 @@ local draw_module_panel = function (player)
         end
     end
 
-    -- Draw container
-    local split_layout = player.gui.screen.module_list.module_list_split_layout
-    if split_layout.secondary_module_info_container then
-        split_layout.secondary_module_info_container.destroy()
-    end
+    if module == nil then return end
 
     local container = split_layout.add({
         type = "frame",
@@ -66,12 +70,12 @@ local draw_module_panel = function (player)
     })
     local label = secondary_module_info.add({
         type = "label",
-        name = "secondary_module_info_direction_label",
+        name = "secondary_module_info_ghosts_label",
         caption = "Contains ghosts: ",
     })
     local value = secondary_module_info.add({
         type = "label",
-        name = "secondary_module_info_direction",
+        name = "secondary_module_info_ghosts",
         caption = string.upper(tostring(module.contains_ghosts)) or "false",
     })
     if module.contains_ghosts then
@@ -117,18 +121,30 @@ local draw_module_panel = function (player)
         caption = string.upper(tostring(module.last_tick_with_changes + constants.MODULE_ACTIVE_CHECK_INTERVAL * 2 >= game.tick)) or "false",
     })
     if module.last_tick_with_changes + constants.MODULE_ACTIVE_CHECK_INTERVAL * 2 >= game.tick then
-        label.style.font_color = {r = 0, g = 1, b = 0}
-        value.style.font_color = {r = 0, g = 1, b = 0}
+        label.style.font_color = {r = 1, g = 1, b = 0}
+        value.style.font_color = {r = 1, g = 1, b = 0}
     end
 
     -- Draw minimap
-    local minimap = container.add({
+    local minimap_container = container.add({
+        type = "frame",
+        name = "minimap_container",
+        direction = "vertical",
+    })
+    local minimap = minimap_container.add({
         type = "minimap",
         name = "secondary_module_info_minimap",
         position = module.position,
         surface_index = module.surface.index,
         zoom = 0.75,
+        tags = {
+            x = module.position.x,
+            y = module.position.y,
+        }
     })
+
+    -- Update with data
+    update_module_panel(player)
 end
 
 return draw_module_panel

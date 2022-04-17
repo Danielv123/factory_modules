@@ -13,7 +13,7 @@ return function (event)
         if event.element == reference.expand_button then
             -- Save the selected element in global so we can update the GUI dynamically on tick
             global.factory_modules.players[player.name].selected_module_reference = reference
-            GUI.draw_module_panel(player, reference)
+            GUI.draw_module_panel(player)
             return
         end
     end

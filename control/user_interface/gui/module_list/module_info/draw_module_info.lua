@@ -1,99 +1,18 @@
---[[
-    Render list entry for the module. Has buttons to expand to show module details.
-]]
-local function render_module(parent, module, index, player)
-    -- for each module with same ID
-    local module_frame = parent.add({
-        type = "frame",
-        name = "module_group_show_panel_btn"..index,
-        direction = "horizontal",
-        tags = {
-            x = module.position.x,
-            y = module.position.y,
-            surface = module.surface.name,
-            index = index,
-        }
-    })
-    module_frame.style.vertical_align = "center"
-    module_frame.style.width = 320
-    local left = module_frame.add({
-        type = "flow",
-        name = "module_group_left",
-        direction = "horizontal",
-    })
-    left.style.width = 100
-    left.style.vertical_align = "center"
-    left.style.vertically_stretchable = true
-    left.add({
-        type = "label",
-        name = "module_group_label",
-        caption = "Position:",
-    })
-    local right = module_frame.add({
-        type = "flow",
-        name = "module_group_right",
-        direction = "vertical",
-    })
-    right.style.minimal_width = 120
-    right.style.vertical_align = "center"
-    right.style.vertically_stretchable = true
-    right.add({
-        type = "label",
-        name = "module_group_position",
-        caption = "X: "..module.position.x.." Y: "..module.position.y,
-    })
-    local buttons = module_frame.add({
-        type = "flow",
-        name = "module_group_buttons",
-        direction = "horizontal",
-    })
-    buttons.add({
-        type = "sprite-button",
-        name = "module_group_goto_btn",
-        sprite = "item/artillery-targeting-remote",
-        tooltip = "Go to module",
-    })
-    -- Expand button
-    local expand_button = buttons.add({
-        type = "sprite-button",
-        name = "secondary_module_group_expand_btn",
-        sprite = "utility/indication_arrow", -- Points up, not down
-        tooltip = "Expand module details",
-        tags = {
-            module_id = module.module_id,
-            uid = module.uid,
-        }
-    })
-
-    if global.factory_modules.players[player.name] == nil then
-        global.factory_modules.players[player.name] = {}
-    end
-    if global.factory_modules.players[player.name].expand_module_references == nil then
-        global.factory_modules.players[player.name].expand_module_references = {}
-    end
-    table.insert(global.factory_modules.players[player.name].expand_module_references, {
-        module = module,
-        expand_button = expand_button,
-    })
-end
-
+local draw_secondary_module_entry = require "secondary_module_entry.draw_secondary_module_entry"
+local update_module_info          = require "update_module_info"
 
 --[[
     Render a panel with overview of the module group and some general information.
-    Below, show a list of all modules in the group using render_module()
+    Below, show a list of all modules in the group using draw_secondary_module_entry()
 ]]
-local function draw_module_info(parent, player, module_id)
+local function draw_module_info(player)
+    local module_id = global.factory_modules.players[player.name].expanded_module_info.module_id
     local split_layout = player.gui.screen.module_list.module_list_split_layout
-    local module = nil
-    for _, m in pairs(global.factory_modules.modules) do
-        if m.module_id == module_id then
-            module = m
-            break
-        end
-    end
+
     -- If the container already exists, remove it
     if split_layout.module_list_info then
-        split_layout.module_list_info.destroy()
+        return update_module_info(player)
+        -- split_layout.module_list_info.destroy()
     end
     -- Draw module info
     local module_info = split_layout.add({
@@ -162,8 +81,9 @@ local function draw_module_info(parent, player, module_id)
         direction = "vertical",
     })
     for index, module in pairs(modules[module_id].modules) do
-        render_module(module_info_modules, module, index, player)
+        draw_secondary_module_entry(module_info_modules, module, index, player)
     end
+    update_module_info(player)
 end
 
 return draw_module_info

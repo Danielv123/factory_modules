@@ -64,7 +64,13 @@ local function draw_module_list(player, module_id)
 
         -- Draw module list
         for _, module in pairs(modules) do
+            -- add flow
             local module_list_item = module_list_scroll.add({
+                type = "flow",
+                name = "module_list_item_" .. module.module_id,
+                direction = "vertical",
+            })
+            module_list_item.add({
                 type = "button",
                 name = "module_group_btn",
                 direction = "horizontal",

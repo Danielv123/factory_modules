@@ -1,4 +1,16 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.4.0
+Date: 2022-04-17
+  Features:
+    - Do GUI updates by updating existing GUI elements instead of creating new ones.
+    - Visualize status messages for unpowered entities, marked for deconstruction and unbuilt 
+      ghosts in modules in the top left corner.
+    - GUI button to go to module now uses zoom to world at max zoom instead of going to map 
+      view.
+  Bugfixes:
+    - Deconstructing a ghost now mirrors to constructed versions of the same type
+    - Deconstructing an entity now mirrors to ghosts in the same location
+---------------------------------------------------------------------------------------------------
 Version: 0.3.8
 Date: 2022-04-16
   Bugfixes:
