@@ -27,6 +27,8 @@ local function draw_module_list(player, module_id)
             name = "module_list_header_name",
             caption = {"factory-modules.module_list_caption"},
         })
+        local spacer = header.add{ type = "flow" }
+        spacer.style.horizontally_stretchable = true
         -- Draw close button
         header.add({
             type = "sprite-button",

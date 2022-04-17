@@ -33,6 +33,8 @@ local function draw_module_info(player)
         name = "module_list_info_header_label",
         caption = "Module info",
     })
+    local spacer = module_info_header.add{ type = "flow" }
+    spacer.style.horizontally_stretchable = true
     -- Draw module info close button
     module_info_header.add({
         type = "sprite-button",

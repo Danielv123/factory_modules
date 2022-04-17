@@ -40,6 +40,8 @@ local draw_module_panel = function (player)
         name = "secondary_module_info_header_name",
         caption = {"factory-modules.secondary_module_info_caption"},
     })
+    local spacer = header.add{ type = "flow" }
+    spacer.style.horizontally_stretchable = true
     header.add({
         type = "sprite-button",
         name = "secondary_module_group_close_btn",
