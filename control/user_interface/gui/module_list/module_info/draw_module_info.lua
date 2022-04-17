@@ -6,6 +6,7 @@ local update_module_info          = require "update_module_info"
     Below, show a list of all modules in the group using draw_secondary_module_entry()
 ]]
 local function draw_module_info(player)
+    if global.factory_modules.players[player.name].expanded_module_info == nil then return end
     local module_id = global.factory_modules.players[player.name].expanded_module_info.module_id
     local split_layout = player.gui.screen.module_list.module_list_split_layout
 
@@ -76,10 +77,11 @@ local function draw_module_info(player)
 
     -- List modules
     local module_info_modules = module_info_content.add({
-        type = "flow",
+        type = "scroll-pane",
         name = "module_list_info_modules",
         direction = "vertical",
     })
+
     for index, module in pairs(modules[module_id].modules) do
         draw_secondary_module_entry(module_info_modules, module, index, player)
     end

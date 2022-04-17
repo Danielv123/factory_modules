@@ -21,6 +21,7 @@ return function(parent, module, index, player)
     })
     module_frame.style.vertical_align = "center"
     module_frame.style.width = 320
+    module_frame.style.vertically_stretchable = false
     local left = module_frame.add({
         type = "flow",
         name = "module_group_left",
@@ -69,6 +70,7 @@ return function(parent, module, index, player)
             uid = module.uid,
         }
     })
+    expand_button.style.width = 32
 
     if global.factory_modules.players[player.name] == nil then
         global.factory_modules.players[player.name] = {}

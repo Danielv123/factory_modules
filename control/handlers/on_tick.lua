@@ -245,10 +245,13 @@ return function (event)
         end
         if game.tick % 60 == 0
         and player.gui.screen.module_list
-        and player.gui.screen.module_list.module_list_split_layout
-        and player.gui.screen.module_list.module_list_split_layout.secondary_module_info_container ~= nil then
-            GUI.update_module_panel(player)
-            GUI.draw_module_info(player)
+        and player.gui.screen.module_list.module_list_split_layout then
+            if player.gui.screen.module_list.module_list_split_layout.secondary_module_info_container ~= nil then
+                GUI.draw_module_panel(player)
+            end
+            if player.gui.screen.module_list.module_list_split_layout.module_list_info ~= nil then
+                GUI.draw_module_info(player)
+            end
         end
     end
 end

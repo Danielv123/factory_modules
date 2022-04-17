@@ -7,6 +7,7 @@ Date: 2022-04-17
       ghosts in modules in the top left corner.
     - GUI button to go to module now uses zoom to world at max zoom instead of going to map 
       view.
+    - Added scrollbar to secondary module list to support more modules than fits on screen.
   Bugfixes:
     - Deconstructing a ghost now mirrors to constructed versions of the same type
     - Deconstructing an entity now mirrors to ghosts in the same location
