@@ -6,14 +6,6 @@ local update_entity_status = require "control.util.module.update_entity_status"
 local floodfill = require "control.util.floodfill.floodfill"
 local get_uid = require "control.util.get_uid"
 
-local find_adjacent = function(entity)
-    local entities = entity.surface.find_entities_filtered{
-        area = {{entity.position.x - 1, entity.position.y - 1}, {entity.position.x + 1, entity.position.y + 1}},
-        name = constants.WALL_PIECES,
-    }
-    return entities
-end
-
 --[[
     Directions:
     0 = north
@@ -450,6 +442,11 @@ local check_if_new_module = function(entity)
             position = power_pole.position,
         })
 
+        local entity_number_lookup = {}
+        for _,v in pairs(filtered_entities) do
+            entity_number_lookup[v.entity.unit_number] = true
+        end
+
         local module = {
             uid = get_uid(),
             primary = primary,
@@ -459,6 +456,7 @@ local check_if_new_module = function(entity)
             power_pole = power_pole,
             module_id = module_id,
             entities = filtered_entities,
+            entity_number_lookup = entity_number_lookup,
             ports = ports,
             position = {
                 x = (max_x + min_x) / 2,

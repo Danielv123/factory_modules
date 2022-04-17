@@ -5,12 +5,21 @@ local handle_deconstruction_in_module = require "control.util.module.handle_deco
 
 local check_if_module_should_be_removed = function (event)
     -- Check if the entity is part of a module
-    for k,v in pairs(global.factory_modules.modules) do
-        for index,entity in pairs(v.entities) do
-            if not entity.entity.valid or not event.entity.valid or entity.entity.unit_number == event.entity.unit_number then
+    for k, v in pairs(global.factory_modules.modules) do
+        if v ~= nil then
+            if v.entity_number_lookup == nil then
+                local entity_number_lookup = {}
+                for _,v in pairs(v.entities) do
+                    entity_number_lookup[v.entity.unit_number] = true
+                end
+                v.entity_number_lookup = entity_number_lookup
+            end
+            if v.entity_number_lookup[event.entity.unit_number] == true then
                 -- Remove special entities connected to the module ports
-                for _,port in pairs(v.ports) do
-                    for _,port_entity in pairs(port.entities) do
+                for i = 1, #v.ports do
+                    local port = v.ports[i]
+                    for o = 1, #port.entities do
+                        local port_entity = port.entities[o]
                         if port_entity.valid then
                             port_entity.destroy()
                         end

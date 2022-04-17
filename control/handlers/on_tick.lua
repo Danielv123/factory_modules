@@ -8,6 +8,7 @@ local update_power_usage = require "control.util.module.secondary.update_power_u
 local visualize_module = require "control.util.module.visualize_module"
 local GUI = require "control.user_interface.gui.gui"
 local get_uid = require "control.util.get_uid"
+local check_if_new_module = require "control.util.module.check_if_new_module"
 
 --[[
     on_tick.lua
@@ -236,6 +237,28 @@ return function (event)
                 return task.tick > event.tick
             end
         )
+    end
+
+    -- Check for delayed new module creations
+    if global.factory_modules.entities_to_check_for_new_modules_tick ~= nil and global.factory_modules.entities_to_check_for_new_modules_tick < event.tick then
+        local new_modules = {}
+        for _, created_entity in pairs(global.factory_modules.entities_to_check_for_new_modules) do
+            local already_part_of_module = false
+            for _, module in pairs(new_modules) do
+                if module.entity_number_lookup[created_entity.unit_number] then
+                    already_part_of_module = true
+                    break
+                end
+            end
+            if created_entity.valid and not already_part_of_module then
+                local status = check_if_new_module(created_entity)
+                if status then
+                    -- A new module was created, store it to avoid duplication of work
+                    table.insert(new_modules, status)
+                end
+            end
+        end
+        global.factory_modules.entities_to_check_for_new_modules = {}
     end
 
     -- Update player GUIs

@@ -3,6 +3,10 @@ Version: 0.4.1
 Date: 2022-04-17
   Features:
     - Right align close buttons in GUI
+  Optimizations:
+    - Made deconstructing module walls more than 10x faster using lookup table
+    - Optimized part of /editor blueprint pasting from O(n!) to O(n)
+    - Made on_built_entity 100% faster, will help when pasting large blueprints
 ---------------------------------------------------------------------------------------------------
 Version: 0.4.0
 Date: 2022-04-17
