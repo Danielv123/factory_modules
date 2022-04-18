@@ -5,6 +5,8 @@ local visualize_module = require "control.util.module.visualize_module"
 local update_entity_status = require "control.util.module.update_entity_status"
 local floodfill = require "control.util.floodfill.floodfill"
 local get_uid = require "control.util.get_uid"
+local draw_animated_belt = require "control.util.visualize.draw_animated_belt"
+local get_fastest_transport_belt = require "control.util.get_fastest_transport_belt"
 
 --[[
     Directions:
@@ -23,40 +25,40 @@ local create_io = function(type, entity, direction)
     local chest_y_offset = 0
     local loader_direction = (direction + 4) % 8
     local area = {{0,0}, {0,0}}
-    if direction == 0 then
-        loader_y_offset = -3
+    if direction == 0 then -- South facing belts
+        loader_y_offset = -2
         external_loader_y_offset = 1
         chest_y_offset = -1
         area = {
-            {entity.position.x, entity.position.y - 3},
+            {entity.position.x, entity.position.y - 2},
+            {entity.position.x, entity.position.y + 1},
+        }
+    end
+    if direction == 2 then -- West facing belts
+        loader_x_offset = 2
+        external_loader_x_offset = -1
+        chest_x_offset = 1
+        area = {
+            {entity.position.x - 1, entity.position.y},
+            {entity.position.x + 2, entity.position.y},
+        }
+    end
+    if direction == 4 then -- North facing belts
+        loader_y_offset = 2
+        external_loader_y_offset = -1
+        chest_y_offset = 1
+        area = {
+            {entity.position.x, entity.position.y - 1},
             {entity.position.x, entity.position.y + 2},
         }
     end
-    if direction == 2 then
-        loader_x_offset = 2
-        external_loader_x_offset = -2
-        chest_x_offset = 1
-        area = {
-            {entity.position.x - 2, entity.position.y},
-            {entity.position.x + 3, entity.position.y},
-        }
-    end
-    if direction == 4 then
-        loader_y_offset = 2
-        external_loader_y_offset = -2
-        chest_y_offset = 1
-        area = {
-            {entity.position.x, entity.position.y - 2},
-            {entity.position.x, entity.position.y + 3},
-        }
-    end
-    if direction == 6 then
-        loader_x_offset = -3
+    if direction == 6 then -- East facing belts
+        loader_x_offset = -2
         external_loader_x_offset = 1
         chest_x_offset = -1
         area = {
-            {entity.position.x - 3, entity.position.y},
-            {entity.position.x + 2, entity.position.y},
+            {entity.position.x - 2, entity.position.y},
+            {entity.position.x + 1, entity.position.y},
         }
     end
     -- Remove obstructing belts
@@ -77,8 +79,9 @@ local create_io = function(type, entity, direction)
         x = entity.position.x + loader_x_offset,
         y = entity.position.y + loader_y_offset
     }
+    local loader_name = get_fastest_transport_belt().name
     local loader = entity.surface.create_entity{
-        name = "express-loader",
+        name = loader_name.."-loader",
         position = loader_position,
         direction = loader_direction,
         force = game.forces.neutral,
@@ -99,7 +102,7 @@ local create_io = function(type, entity, direction)
         y = entity.position.y + external_loader_y_offset
     }
     local external_loader = entity.surface.create_entity{
-        name = "express-loader",
+        name = loader_name.."-loader",
         position = external_loader_position,
         direction = direction,
         force = game.forces.neutral,
@@ -133,9 +136,15 @@ local create_io = function(type, entity, direction)
     if type == "output" then
         loader.loader_type = "input"
         external_loader.loader_type = "output"
+        -- Create visualisation to complete belt look
+        draw_animated_belt(direction, entity.surface, loader)
+        draw_animated_belt(direction, entity.surface, external_loader)
     elseif type == "input" then
         loader.loader_type = "output"
         external_loader.loader_type = "input"
+        -- Create visualisation to complete belt look
+        draw_animated_belt(loader_direction, entity.surface, loader)
+        draw_animated_belt(loader_direction, entity.surface, external_loader)
     end
 
     --[[ Set other entity properties ]]

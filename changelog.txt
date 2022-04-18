@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.5.0
+Date: 2022-04-18
+  Features:
+    - Loaders are now 1x1. They take their speed from the fastest type of transport belt installed
+      so faster belts from mods should be supported. They are styled to look like normal belts.
+---------------------------------------------------------------------------------------------------
 Version: 0.4.2
 Date: 2022-04-17
   Bugfixes:
