@@ -5,9 +5,12 @@ directions[2] = "west"
 directions[4] = "north"
 directions[6] = "east"
 
-local fastest_transport_belt = get_fastest_transport_belt().name
+local fastest_transport_belt = nil
 
 return function (direction, surface, loader)
+    if fastest_transport_belt == nil then
+        fastest_transport_belt = get_fastest_transport_belt().name
+    end
     local prototype = game.entity_prototypes[loader.name]
     return rendering.draw_animation({
         animation = fastest_transport_belt.."-"..directions[direction],
